@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('studios', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');             // ชื่อสตูดิโอ
+            $table->text('description')->nullable(); // รายละเอียด
+            $table->decimal('price_per_hour', 10, 2); // ราคาต่อชั่วโมง
+            $table->integer('capacity')->default(1);  // รองรับคนได้กี่คน
+            $table->string('status')->default('active'); // สถานะ (active, maintenance, closed)
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('studios');
+    }
+};
