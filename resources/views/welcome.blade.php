@@ -1,78 +1,150 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Hub Studio - จองสตูดิโอและอุปกรณ์</title>
+    <title>Create Hub Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
 
-    <nav class="bg-white border-b p-4 flex justify-between items-center shadow-sm">
-        <div class="text-xl font-bold text-blue-600">Create Hub Studio</div>
-        <div class="flex gap-4 items-center">
-            @if (Route::has('login'))
+<body class="bg-[#0B0F1A] text-white antialiased">
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="bg-black/40 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+
+            <div class="flex items-center gap-2 text-lg font-semibold">
+                <span class="text-yellow-400">📷</span>
+                <span class="tracking-wide">CREATE HUB</span>
+            </div>
+
+            <div class="flex gap-8 items-center text-sm">
+
+                <a class="text-gray-300 hover:text-white transition">Features</a>
+                <a class="text-gray-300 hover:text-white transition">Pricing</a>
+                <a class="text-gray-300 hover:text-white transition">About</a>
+
+                @if (Route::has('login'))
                 @auth
-                    {{-- แสดงชื่อและปุ่มไป Dashboard ตาม Role --}}
-                    <span class="text-sm text-gray-600">สวัสดี, {{ auth()->user()->name }}</span>
-                    <a href="{{ 
+                <a href="{{ 
                         match(auth()->user()->role) {
                             'admin' => route('admin.dashboard'),
                             'provider' => route('provider.dashboard'),
                             default => route('customer.explore.index'),
                         } 
-                    }}" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">
-                        ไปที่ Dashboard
-                    </a>
+                    }}"
+                    class="px-4 py-2 rounded-xl bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition">
+                    Dashboard
+                </a>
                 @else
-                    <a href="{{ route('login') }}" class="text-sm font-medium hover:text-blue-600">Log in</a>
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="border border-blue-600 text-blue-600 px-4 py-1.5 rounded text-sm hover:bg-blue-50">Register</a>
-                    @endif
+                <a href="{{ route('login') }}"
+                    class="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition">
+                    เข้าสู่ระบบ / Login
+                </a>
                 @endauth
-            @endif
+                @endif
+
+            </div>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-6 py-20 text-center">
-        <h1 class="text-5xl font-extrabold mb-6">ค้นหาและจองสตูดิโอที่ดีที่สุด</h1>
-        <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
-            แหล่งรวมสตูดิโอถ่ายภาพ อุปกรณ์กองถ่าย และทีมงานมืออาชีพ ครบจบในที่เดียว
-        </p>
-        
-        <div class="flex justify-center gap-4">
-            <a href="{{ route('customer.explore.index') }}" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold shadow-lg hover:bg-blue-700 transition">
-                เริ่มค้นหาสตูดิโอ
-            </a>
-            <a href="{{ route('register') }}?role=provider" class="bg-white border border-gray-300 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-50 transition">
-                สำหรับเจ้าของสตูดิโอ
-            </a>
-        </div>
-    </main>
+    <!-- ================= HERO ================= -->
+    <section class="relative overflow-hidden">
 
-    <section class="bg-white py-16 border-t">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div>
-                <div class="text-4xl mb-4">📸</div>
-                <h3 class="text-xl font-bold mb-2">สตูดิโอหลากหลาย</h3>
-                <p class="text-gray-500">เลือกสตูดิโอที่ตรงใจคุณจากตัวเลือกมากมายทั่วประเทศ</p>
+        <!-- Glow Background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-black to-black"></div>
+        <div class="absolute top-1/3 left-1/3 w-[500px] h-[500px] bg-yellow-500/10 blur-[120px] rounded-full"></div>
+
+        <div class="relative max-w-6xl mx-auto px-8 py-32 text-center">
+
+            <div class="inline-block px-4 py-2 rounded-full border border-yellow-400/40 text-yellow-400 text-sm mb-8">
+                ✨ All-in-One Studio Platform
             </div>
-            <div>
-                <div class="text-4xl mb-4">💡</div>
-                <h3 class="text-xl font-bold mb-2">อุปกรณ์ครบครัน</h3>
-                <p class="text-gray-500">เช่าไฟ กล้อง และอุปกรณ์เสริมต่างๆ พร้อมการจองสตูดิโอ</p>
+
+            <h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-yellow-400 via-yellow-200 to-purple-400 text-transparent bg-clip-text">
+                Create. Produce. Thrive.
+            </h1>
+
+            <p class="text-gray-400 text-lg mb-10 max-w-2xl mx-auto">
+                ระบบจองสตูดิโอและอุปกรณ์ครบวงจร
+                Platform for studio rental, equipment booking, staff hiring, and live production.
+            </p>
+
+            <div class="flex justify-center gap-6 flex-wrap">
+
+                <a href="{{ route('customer.explore.index') }}"
+                    class="px-8 py-4 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition">
+                    จองสตูดิโอ / Book Studio →
+                </a>
+
+                <a href="{{ route('register') }}?role=provider"
+                    class="px-8 py-4 rounded-xl border border-white/20 hover:bg-white/10 transition">
+                    ปล่อยเช่าสตูดิโอ / List Your Studio
+                </a>
+
             </div>
-            <div>
-                <div class="text-4xl mb-4">👤</div>
-                <h3 class="text-xl font-bold mb-2">ทีมงานมืออาชีพ</h3>
-                <p class="text-gray-500">จองช่างภาพ สไตล์ลิสต์ หรือช่างไฟ เพื่อช่วยให้งานคุณราบรื่น</p>
-            </div>
+
         </div>
+
     </section>
 
-    <footer class="p-8 text-center text-gray-400 border-t">
-        &copy; 2026 Create Hub Studio. All rights reserved.
+    <!-- ================= FEATURES ================= -->
+    <section class="bg-[#0F1525] py-24 border-t border-white/5">
+
+        <div class="max-w-6xl mx-auto px-8 text-center">
+
+            <h2 class="text-3xl font-bold mb-6">
+                Platform Features
+            </h2>
+
+            <p class="text-gray-400 mb-16">
+                ฟีเจอร์ครบครันสำหรับทุกความต้องการ
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-10">
+
+                <div class="bg-[#131A2E] p-8 rounded-2xl border border-white/5 hover:border-yellow-400/40 transition">
+                    <div class="text-yellow-400 text-3xl mb-4">📸</div>
+                    <h3 class="font-semibold mb-3">Studio Booking</h3>
+                    <p class="text-gray-400 text-sm">
+                        ค้นหาและจองสตูดิโอได้ง่ายในไม่กี่คลิก
+                    </p>
+                </div>
+
+                <div class="bg-[#131A2E] p-8 rounded-2xl border border-white/5 hover:border-yellow-400/40 transition">
+                    <div class="text-yellow-400 text-3xl mb-4">💡</div>
+                    <h3 class="font-semibold mb-3">Equipment Rental</h3>
+                    <p class="text-gray-400 text-sm">
+                        เช่าอุปกรณ์เสริมพร้อมสตูดิโอได้ทันที
+                    </p>
+                </div>
+
+                <div class="bg-[#131A2E] p-8 rounded-2xl border border-white/5 hover:border-yellow-400/40 transition">
+                    <div class="text-yellow-400 text-3xl mb-4">👥</div>
+                    <h3 class="font-semibold mb-3">Staff Hiring</h3>
+                    <p class="text-gray-400 text-sm">
+                        จองทีมงานมืออาชีพเพื่อช่วยให้งานคุณสมบูรณ์แบบ
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <footer class="py-10 text-center text-gray-500 text-sm border-t border-white/5">
+        © 2026 Create Hub Studio
     </footer>
 
+    <!-- ================= Mr.Pacman button ================= -->
+    <a href="https://www.google.com/logos/2010/pacman10-i.html"
+        target="_blank"
+        class="fixed bottom-6 right-6 px-6 py-3 bg-yellow-500 text-black rounded-full font-semibold shadow-xl hover:bg-yellow-400 transition">
+        🟡 Mr.Pac
+    </a>
+
 </body>
+
 </html>

@@ -1,73 +1,145 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <title>รีวิวและเสียงตอบรับ - Create Hub Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Kanit', sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
 
-    <nav class="bg-indigo-900 text-white p-4">
+<body class="bg-[#0B0F1A] text-white min-h-screen">
+
+    <!-- HEADER BAR -->
+    <nav class="bg-[#0F1525] border-b border-white/5 p-5">
         <div class="max-w-4xl mx-auto flex items-center gap-4">
-            <a href="{{ route('provider.dashboard') }}" class="hover:underline">← Dashboard</a>
-            <h1 class="text-xl font-bold">รีวิวจากลูกค้า</h1>
+            <a href="{{ route('provider.dashboard') }}"
+                class="text-yellow-400 hover:underline text-sm">
+                ← Dashboard
+            </a>
+            <h1 class="text-xl font-semibold">
+                รีวิวจากลูกค้า
+            </h1>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto p-8">
-        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8 flex items-center justify-between">
+
+        <!-- SUMMARY CARD -->
+        <div class="bg-[#131A2E] rounded-2xl p-8 border border-white/5 mb-10 flex items-center justify-between">
+
             <div>
-                <h2 class="text-4xl font-bold text-gray-800">4.8 <span class="text-xl text-orange-400">★</span></h2>
-                <p class="text-gray-400 text-sm font-medium uppercase tracking-widest mt-1">คะแนนรีวิวเฉลี่ยของคุณ</p>
+                <h2 class="text-4xl font-bold text-yellow-400">
+                    4.8 <span class="text-xl">★</span>
+                </h2>
+
+                <p class="text-gray-400 text-xs uppercase tracking-wider mt-2">
+                    คะแนนรีวิวเฉลี่ยของคุณ
+                </p>
             </div>
-            <div class="text-right">
-                <p class="text-sm text-gray-500">จากทั้งหมด <strong>{{ count($reviews ?? []) }}</strong> ความคิดเห็น</p>
+
+            <div class="text-right text-gray-400 text-sm">
+                จากทั้งหมด <strong>{{ count($reviews ?? []) }}</strong> ความคิดเห็น
             </div>
+
         </div>
 
+
+        <!-- REVIEWS LIST -->
         <div class="space-y-6">
+
             @forelse($reviews ?? [] as $review)
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                <div class="flex justify-between items-start mb-4">
+
+            <div class="bg-[#131A2E] p-6 rounded-2xl border border-white/5">
+
+                <!-- TOP -->
+                <div class="flex justify-between items-start mb-5">
+
                     <div class="flex gap-3 items-center">
-                        <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center font-bold text-indigo-600">
+
+                        <div class="w-10 h-10 bg-[#0F1525] rounded-full flex items-center justify-center font-semibold border border-white/10">
                             {{ substr($review->user->name, 0, 1) }}
                         </div>
+
                         <div>
-                            <h4 class="font-bold text-gray-800">{{ $review->user->name }}</h4>
-                            <p class="text-[10px] text-gray-400">{{ $review->created_at->format('d/m/Y') }} • จองสตูดิโอ: {{ $review->studio->name }}</p>
+                            <h4 class="font-semibold">
+                                {{ $review->user->name }}
+                            </h4>
+
+                            <p class="text-xs text-gray-500">
+                                {{ $review->created_at->format('d/m/Y') }}
+                                • จองสตูดิโอ: {{ $review->studio->name }}
+                            </p>
                         </div>
+
                     </div>
-                    <div class="text-orange-400 font-bold">
-                        {{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}
+
+                    <div class="text-yellow-400 font-semibold">
+                        {{ str_repeat('★', $review->rating) }}
+                        {{ str_repeat('☆', 5 - $review->rating) }}
                     </div>
+
                 </div>
-                <p class="text-gray-700 text-sm leading-relaxed bg-gray-50 p-4 rounded-2xl italic">
+
+                <!-- COMMENT -->
+                <p class="text-gray-400 text-sm leading-relaxed bg-[#0F1525] p-4 rounded-xl italic border border-white/5">
                     "{{ $review->comment }}"
                 </p>
-                
+
+
                 @if($review->reply)
-                <div class="mt-4 ml-8 p-4 bg-indigo-50 rounded-2xl border-l-4 border-indigo-300">
-                    <p class="text-[10px] font-bold text-indigo-600 uppercase mb-1">การตอบกลับจากคุณ:</p>
-                    <p class="text-sm text-indigo-800">{{ $review->reply }}</p>
+
+                <!-- REPLY -->
+                <div class="mt-6 ml-6 p-4 bg-yellow-500/10 rounded-xl border-l-4 border-yellow-400">
+                    <p class="text-xs font-semibold text-yellow-400 uppercase mb-1">
+                        การตอบกลับจากคุณ:
+                    </p>
+                    <p class="text-sm text-gray-300">
+                        {{ $review->reply }}
+                    </p>
                 </div>
+
                 @else
-                <form action="{{ route('provider.reviews.reply', $review->id) }}" method="POST" class="mt-4 flex gap-2">
-                    @csrf @method('PATCH')
-                    <input type="text" name="reply" placeholder="เขียนข้อความตอบกลับ..." class="flex-1 text-sm border p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300">
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-bold">ตอบกลับ</button>
+
+                <!-- REPLY FORM -->
+                <form action="{{ route('provider.reviews.reply', $review->id) }}"
+                    method="POST"
+                    class="mt-6 flex gap-3">
+                    @csrf
+                    @method('PATCH')
+
+                    <input type="text"
+                        name="reply"
+                        placeholder="เขียนข้อความตอบกลับ..."
+                        class="flex-1 px-4 py-3 rounded-xl bg-[#0F1525] border border-white/10 text-sm focus:border-yellow-400 outline-none">
+
+                    <button type="submit"
+                        class="px-5 py-3 bg-yellow-500 text-black rounded-xl text-sm font-semibold hover:bg-yellow-400 transition">
+                        ตอบกลับ
+                    </button>
                 </form>
+
                 @endif
+
             </div>
+
             @empty
-            <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed text-gray-400">
-                <p>ยังไม่มีรีวิวจากลูกค้าในขณะนี้</p>
+
+            <div class="text-center py-24 bg-[#131A2E] rounded-2xl border border-dashed border-white/10 text-gray-500">
+                <p class="text-lg">ยังไม่มีรีวิวจากลูกค้าในขณะนี้</p>
             </div>
+
             @endforelse
+
         </div>
+
     </main>
 
 </body>
+
 </html>

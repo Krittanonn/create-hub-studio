@@ -1,68 +1,170 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการทีมงาน - Create Hub Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Kanit', sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+        }
+    </style>
 </head>
-<body class="bg-gray-50 flex min-h-screen text-sm">
 
-    <aside class="w-64 bg-indigo-950 text-white flex-shrink-0 hidden md:flex flex-col">
-        <div class="p-6 text-2xl font-bold border-b border-indigo-900 text-center"><span class="text-indigo-400">Create</span>Hub</div>
-        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-            <a href="{{ route('provider.dashboard') }}" class="flex items-center gap-3 p-3 hover:bg-indigo-900 rounded-lg">📊 Dashboard</a>
-            <a href="{{ route('provider.studios.index') }}" class="flex items-center gap-3 p-3 hover:bg-indigo-900 rounded-lg">🏠 สตูดิโอของฉัน</a>
-            <a href="{{ route('provider.equipments.index') }}" class="flex items-center gap-3 p-3 hover:bg-indigo-900 rounded-lg">💡 อุปกรณ์เช่า</a>
-            <a href="{{ route('provider.staffs.index') }}" class="flex items-center gap-3 p-3 bg-indigo-800 rounded-lg">👨‍💼 ทีมงาน / Staff</a>
-            <hr class="border-indigo-900">
-            <form action="{{ route('logout') }}" method="POST">@csrf
-                <button type="submit" class="w-full text-left p-3 text-red-400">🚪 ออกจากระบบ</button>
-            </form>
+<body class="bg-[#0B0F1A] text-white flex min-h-screen text-sm">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-[#0F1525] border-r border-white/5 hidden md:flex flex-col">
+
+        <div class="p-6 text-xl font-semibold border-b border-white/5 text-center">
+            <span class="text-yellow-400">CREATE</span> HUB
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2">
+
+            <a href="{{ route('provider.dashboard') }}"
+                class="block px-4 py-3 rounded-xl hover:bg-white/5 transition">
+                📊 Dashboard
+            </a>
+
+            <a href="{{ route('provider.studios.index') }}"
+                class="block px-4 py-3 rounded-xl hover:bg-white/5 transition">
+                🏠 สตูดิโอของฉัน
+            </a>
+
+            <a href="{{ route('provider.equipments.index') }}"
+                class="block px-4 py-3 rounded-xl hover:bg-white/5 transition">
+                💡 อุปกรณ์เช่า
+            </a>
+
+            <a href="{{ route('provider.staffs.index') }}"
+                class="block px-4 py-3 rounded-xl bg-yellow-500 text-black font-medium">
+                👨‍💼 ทีมงาน / Staff
+            </a>
+
         </nav>
+
+        <div class="p-4 border-t border-white/5">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="w-full px-4 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 transition">
+                    🚪 ออกจากระบบ
+                </button>
+            </form>
+        </div>
+
     </aside>
 
-    <main class="flex-1 p-8 lg:p-12">
+
+    <!-- MAIN -->
+    <main class="flex-1 p-10 lg:p-14">
+
         <div class="max-w-5xl mx-auto">
-            <div class="flex justify-between items-center mb-10">
-                <h1 class="text-3xl font-bold text-gray-800">จัดการทีมงาน 👨‍💼</h1>
-                <a href="{{ route('provider.staffs.create') }}" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition">
+
+            <!-- HEADER -->
+            <div class="flex justify-between items-center mb-12">
+
+                <h1 class="text-3xl font-semibold">
+                    จัดการทีมงาน 👨‍💼
+                </h1>
+
+                <a href="{{ route('provider.staffs.create') }}"
+                    class="bg-yellow-500 text-black px-6 py-3 rounded-2xl font-semibold hover:bg-yellow-400 transition">
                     + เพิ่มทีมงาน
                 </a>
+
             </div>
 
-            <div class="space-y-4">
+
+            <!-- LIST -->
+            <div class="space-y-6">
+
                 @forelse($staffs ?? [] as $staff)
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-6">
-                    <div class="w-24 h-24 bg-indigo-50 rounded-2xl flex items-center justify-center text-4xl shrink-0">👤</div>
+
+                <div class="bg-[#131A2E] p-6 rounded-2xl border border-white/5 flex flex-col md:flex-row items-center gap-6 hover:border-yellow-400/40 transition">
+
+                    <!-- ICON -->
+                    <div class="w-24 h-24 bg-[#0F1525] rounded-2xl flex items-center justify-center text-4xl shrink-0 border border-white/10">
+                        👤
+                    </div>
+
+                    <!-- INFO -->
                     <div class="flex-1 text-center md:text-left">
-                        <h4 class="text-xl font-bold text-gray-800">{{ $staff->name }}</h4>
-                        <p class="text-indigo-500 font-bold text-xs uppercase tracking-widest mt-1">{{ $staff->position ?? 'Professional Staff' }}</p>
-                        <p class="text-gray-400 mt-2 italic line-clamp-1">"{{ $staff->description }}"</p>
+                        <h4 class="text-xl font-semibold">
+                            {{ $staff->name }}
+                        </h4>
+
+                        <p class="text-yellow-400 text-xs uppercase tracking-wider mt-2">
+                            {{ $staff->position ?? 'Professional Staff' }}
+                        </p>
+
+                        <p class="text-gray-400 mt-3 text-sm italic line-clamp-1">
+                            "{{ $staff->description }}"
+                        </p>
                     </div>
-                    <div class="text-center md:text-right px-8 border-x md:border-x-0 md:border-l border-gray-100">
-                        <p class="text-xs text-gray-400 uppercase font-bold">อัตราค่าจ้าง</p>
-                        <p class="text-2xl font-bold text-gray-800">฿{{ number_format($staff->price_per_hour) }}</p>
-                        <p class="text-[10px] text-gray-400">/ ชั่วโมง</p>
+
+                    <!-- PRICE -->
+                    <div class="text-center md:text-right px-8 border-x border-white/5">
+
+                        <p class="text-xs text-gray-500 uppercase">
+                            อัตราค่าจ้าง
+                        </p>
+
+                        <p class="text-2xl font-bold text-yellow-400">
+                            ฿{{ number_format($staff->price_per_hour) }}
+                        </p>
+
+                        <p class="text-xs text-gray-500">
+                            / ชั่วโมง
+                        </p>
+
                     </div>
-                    <div class="flex md:flex-col gap-2">
-                        <a href="{{ route('provider.staffs.edit', $staff->id) }}" class="p-3 bg-gray-50 text-indigo-600 rounded-xl hover:bg-indigo-50 transition border">✏️ แก้ไข</a>
-                        <form action="{{ route('provider.staffs.destroy', $staff->id) }}" method="POST">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="p-3 bg-gray-50 text-red-500 rounded-xl hover:bg-red-50 transition border" onclick="return confirm('ต้องการลบข้อมูลสตาฟฟ์ใช่ไหม?')">🗑️ ลบ</button>
+
+                    <!-- ACTIONS -->
+                    <div class="flex md:flex-col gap-3">
+
+                        <a href="{{ route('provider.staffs.edit', $staff->id) }}"
+                            class="px-4 py-2 border border-white/10 rounded-xl hover:bg-white/5 transition text-center">
+                            ✏️ แก้ไข
+                        </a>
+
+                        <form action="{{ route('provider.staffs.destroy', $staff->id) }}"
+                            method="POST">
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit"
+                                class="px-4 py-2 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition w-full"
+                                onclick="return confirm('ต้องการลบข้อมูลสตาฟฟ์ใช่ไหม?')">
+                                🗑️ ลบ
+                            </button>
                         </form>
+
                     </div>
+
                 </div>
+
                 @empty
-                <div class="py-20 text-center bg-white rounded-3xl border-2 border-dashed border-gray-200 text-gray-400 italic">
-                    <p class="text-5xl mb-4">🕴️</p>
+
+                <div class="py-24 text-center bg-[#131A2E] rounded-2xl border border-dashed border-white/10 text-gray-500">
+
+                    <p class="text-6xl mb-6 text-yellow-400">🕴️</p>
+
                     ยังไม่มีทีมงานในสตูดิโอของคุณ
+
                 </div>
+
                 @endforelse
+
             </div>
+
         </div>
+
     </main>
+
 </body>
+
 </html>
