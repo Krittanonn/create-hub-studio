@@ -1,242 +1,136 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>จัดการรายการจอง - Create Hub Studio</title>
+    <title>รายการจองทั้งหมด - Create Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+<body class="bg-[#0B0F1A] text-white flex min-h-screen">
 
-<body class="bg-[#0B0F1A] text-white min-h-screen">
-
-    <!-- HEADER -->
-    <nav class="bg-[#0F1525] border-b border-white/5 p-5 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-
-            <div class="flex items-center gap-4">
-                <a href="{{ route('provider.dashboard') }}"
-                    class="text-yellow-400 hover:underline text-lg">
-                    ←
-                </a>
-                <h1 class="text-xl font-semibold">
-                    ตารางการจองลูกค้า
-                </h1>
-            </div>
-
-            <div class="flex items-center gap-3 bg-yellow-500/10 px-4 py-1.5 rounded-full border border-yellow-400/30">
-                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                <span class="text-sm font-medium text-yellow-400">Live Bookings</span>
-            </div>
-
+    <aside class="w-64 bg-[#0F1525] border-r border-white/5 min-h-screen p-6 flex flex-col fixed">
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold italic text-white">CREATE<span class="text-blue-500">HUB</span></h2>
+            <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Provider Mode</p>
         </div>
-    </nav>
+        <nav class="space-y-2 flex-1 text-sm overflow-y-auto pr-2 custom-scrollbar">
+    <div class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 ml-4">Main Menu</div>
+    
+    <a href="{{ route('provider.dashboard') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.dashboard') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-chart-pie w-5"></i> แผงควบคุม
+    </a>
+
+    <a href="{{ route('provider.studios.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.studios.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-house-laptop w-5"></i> สตูดิโอของฉัน
+    </a>
+
+    <a href="{{ route('provider.bookings.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.bookings.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-calendar-check w-5"></i> รายการจอง
+    </a>
+
+    <div class="pt-4 pb-2 text-[10px] text-gray-500 uppercase tracking-widest font-bold ml-4">Resources</div>
+
+    <a href="{{ route('provider.equipments.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.equipments.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-camera w-5"></i> อุปกรณ์เสริม
+    </a>
+
+    <a href="{{ route('provider.staffs.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.staffs.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-user-tie w-5"></i> ทีมงานพนักงาน
+    </a>
+
+    <a href="{{ route('provider.availability.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.availability.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-calendar-xmark w-5"></i> จัดการช่วงเวลาว่าง
+    </a>
+
+    <div class="pt-4 pb-2 text-[10px] text-gray-500 uppercase tracking-widest font-bold ml-4">Finance & Community</div>
+
+    <a href="{{ route('provider.payouts.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.payouts.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-wallet w-5"></i> การเงิน/ถอนเงิน
+    </a>
 
 
-    <main class="max-w-7xl mx-auto p-6 lg:p-10">
-
-        <!-- TOP SECTION -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
-
-            <div>
-                <h2 class="text-2xl font-semibold">
-                    รายการจองทั้งหมด
-                </h2>
-                <p class="text-gray-500 text-sm">
-                    ตรวจสอบและจัดการสถานะการจองสตูดิโอของคุณ
-                </p>
-            </div>
-
-            <div class="flex bg-[#131A2E] p-1 rounded-xl border border-white/5">
-                <button class="px-6 py-2 bg-yellow-500 text-black rounded-lg text-sm font-semibold">
-                    ทั้งหมด
+    <a href="{{ route('provider.reviews.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.reviews.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-star w-5"></i> รีวิวจากลูกค้า
+    </a>
+<div class="mt-auto pt-6 border-t border-white/5">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition group">
+                    <i class="fa-solid fa-right-from-bracket group-hover:rotate-180 transition-transform duration-300"></i> ออกจากระบบ
                 </button>
-                <button class="px-6 py-2 text-gray-400 hover:text-yellow-400 rounded-lg text-sm transition">
-                    รอชำระเงิน
-                </button>
-                <button class="px-6 py-2 text-gray-400 hover:text-yellow-400 rounded-lg text-sm transition">
-                    ยืนยันแล้ว
-                </button>
-            </div>
-
+            </form>
         </div>
+</nav>
+    </aside>
 
+    <main class="flex-1 ml-64 p-10">
+        <header class="mb-10">
+            <h1 class="text-3xl font-bold">รายการจองลูกค้า</h1>
+            <p class="text-gray-400">จัดการและตรวจสอบสถานะการจองสตูดิโอทั้งหมดของคุณ</p>
+        </header>
 
-        <!-- BOOKINGS -->
-        <div class="grid grid-cols-1 gap-8">
-
-            @forelse($bookings ?? [] as $booking)
-
-            <div class="bg-[#131A2E] rounded-2xl border border-white/5 overflow-hidden hover:border-yellow-400/40 transition">
-
-                <div class="flex flex-col md:flex-row">
-
-                    <!-- LEFT ORDER INFO -->
-                    <div class="md:w-48 bg-[#0F1525] p-6 flex flex-col justify-center items-center border-r border-white/5">
-
-                        <span class="text-xs text-gray-500 uppercase mb-2">Order ID</span>
-
-                        <span class="font-mono text-yellow-400 font-semibold">
-                            #BK-{{ str_pad($booking->id, 5, '0', STR_PAD_LEFT) }}
-                        </span>
-
-                        <div class="mt-4 px-3 py-1 rounded-full text-xs font-semibold uppercase
-                        {{ $booking->status == 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                           ($booking->status == 'confirmed' ? 'bg-green-500/20 text-green-400' :
-                           'bg-red-500/20 text-red-400') }}">
-                            {{ $booking->status }}
-                        </div>
-
-                    </div>
-
-
-                    <!-- CENTER INFO -->
-                    <div class="flex-1 p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-[#0F1525] rounded-2xl flex items-center justify-center border border-white/10">
-                                🏠
-                            </div>
-                            <div>
-                                <h4 class="font-semibold">
-                                    {{ $booking->studio->name }}
-                                </h4>
-                                <p class="text-xs text-gray-500">
-                                    {{ $booking->studio->location }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="text-xs text-gray-500 uppercase mb-1">
-                                วันและเวลาที่จอง
-                            </p>
-                            <div class="flex items-center gap-2 text-sm">
-                                <span class="font-semibold">
-                                    {{ $booking->start_time->format('d M Y') }}
-                                </span>
-                                <span class="text-gray-500">|</span>
-                                <span>
-                                    {{ $booking->start_time->format('H:i') }}
-                                    -
-                                    {{ $booking->end_time->format('H:i') }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col md:items-end">
-                            <p class="text-xs text-gray-500 uppercase mb-1">
-                                ยอดชำระสุทธิ
-                            </p>
-                            <span class="text-2xl font-semibold text-yellow-400">
-                                ฿{{ number_format($booking->total_price, 2) }}
+        <div class="bg-[#131A2E] rounded-2xl border border-white/5 overflow-hidden">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-white/[0.02] text-gray-400">
+                    <tr>
+                        <th class="px-6 py-4 font-medium">รหัสการจอง</th>
+                        <th class="px-6 py-4 font-medium">สตูดิโอ</th>
+                        <th class="px-6 py-4 font-medium">ลูกค้า</th>
+                        <th class="px-6 py-4 font-medium">วัน-เวลา</th>
+                        <th class="px-6 py-4 font-medium text-center">สถานะ</th>
+                        <th class="px-6 py-4 font-medium text-right">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    @forelse($bookings as $booking)
+                    <tr class="hover:bg-white/[0.01] transition">
+                        <td class="px-6 py-4 font-mono text-blue-400">#{{ $booking->id }}</td>
+                        <td class="px-6 py-4">{{ $booking->studio->name }}</td>
+                        <td class="px-6 py-4">{{ $booking->user->name }}</td>
+                        <td class="px-6 py-4">
+                            <div>{{ $booking->start_time->format('d M Y') }}</div>
+                            <div class="text-xs text-gray-500">{{ $booking->start_time->format('H:i') }} - {{ $booking->end_time->format('H:i') }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            @php
+                                $statusClasses = [
+                                    'pending' => 'bg-yellow-500/10 text-yellow-500',
+                                    'confirmed' => 'bg-green-500/10 text-green-500',
+                                    'cancelled' => 'bg-red-500/10 text-red-500',
+                                    'completed' => 'bg-blue-500/10 text-blue-500',
+                                ];
+                            @endphp
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase {{ $statusClasses[$booking->status] ?? 'bg-gray-500/10 text-gray-500' }}">
+                                {{ $booking->status }}
                             </span>
-                        </div>
-
-                    </div>
-
-
-                    <!-- RIGHT ACTION -->
-                    <div class="bg-[#0F1525] md:w-56 p-6 flex flex-col justify-center gap-3 border-l border-white/5">
-
-                        <a href="{{ route('provider.bookings.show', $booking->id) }}"
-                            class="text-center py-2 text-sm font-semibold bg-[#131A2E] border border-white/10 rounded-xl hover:bg-white/5 transition">
-                            ดูรายละเอียด
-                        </a>
-
-                        @if($booking->status == 'pending')
-
-                        <div class="flex gap-2">
-
-                            <form action="{{ route('provider.bookings.update-status', $booking->id) }}"
-                                method="POST"
-                                class="flex-1">
-                                @csrf
-                                @method('PATCH')
-                                <input type="hidden" name="status" value="confirmed">
-                                <button type="submit"
-                                    class="w-full py-2 bg-green-500 text-white text-xs font-semibold rounded-xl hover:bg-green-600 transition">
-                                    ยืนยัน
-                                </button>
-                            </form>
-
-                            <form action="{{ route('provider.bookings.update-status', $booking->id) }}"
-                                method="POST"
-                                class="flex-1">
-                                @csrf
-                                @method('PATCH')
-                                <input type="hidden" name="status" value="cancelled">
-                                <button type="submit"
-                                    class="w-full py-2 bg-red-500/20 text-red-400 text-xs font-semibold rounded-xl hover:bg-red-500 hover:text-white transition">
-                                    ปฏิเสธ
-                                </button>
-                            </form>
-
-                        </div>
-
-                        @endif
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            @empty
-
-            <div class="bg-[#131A2E] rounded-2xl p-20 text-center border border-dashed border-white/10 text-gray-500">
-                <div class="text-6xl mb-4 text-yellow-400">📅</div>
-                <h3 class="text-lg font-semibold">
-                    ยังไม่มีรายการจองเข้ามา
-                </h3>
-                <p class="text-gray-500 mt-2">
-                    เมื่อมีลูกค้าจองสตูดิโอของคุณ รายการจะมาปรากฏที่นี่
-                </p>
-            </div>
-
-            @endforelse
-
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ route('provider.bookings.show', $booking->id) }}" class="text-gray-400 hover:text-white transition">
+                                <i class="fa-solid fa-eye mr-1"></i> รายละเอียด
+                            </a>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic">ไม่มีข้อมูลการจองในขณะนี้</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-
-
-        <!-- BOTTOM INFO SECTION -->
-        <div class="mt-14 grid grid-cols-1 md:grid-cols-2 gap-8">
-
-            <div class="bg-[#131A2E] rounded-2xl p-8 border border-white/5 relative overflow-hidden">
-                <h3 class="text-lg font-semibold mb-4">
-                    ระบบจัดการคิวอัตโนมัติ
-                </h3>
-                <p class="text-gray-400 text-sm mb-6">
-                    คุณสามารถตั้งค่าเปิด/ปิด วันที่รับจองได้ที่เมนู "จัดการตารางเวลา"
-                    เพื่อป้องกันการจองซ้อน
-                </p>
-                <a href="{{ route('provider.availability.index') }}"
-                    class="inline-block bg-yellow-500 text-black px-6 py-2 rounded-xl text-sm font-semibold hover:bg-yellow-400 transition">
-                    จัดการตารางเวลา
-                </a>
-            </div>
-
-            <div class="bg-[#131A2E] rounded-2xl p-8 border border-white/5">
-                <h3 class="text-lg font-semibold text-yellow-400 mb-4">
-                    Tips สำหรับคุณ!
-                </h3>
-                <ul class="space-y-3 text-sm text-gray-400">
-                    <li>✅ รีบยืนยันการจองภายใน 1 ชม. เพื่อเพิ่มคะแนนร้าน</li>
-                    <li>📸 อัปโหลดรูปสตูดิโอให้ครบทุกมุมเพื่อเพิ่มโอกาสจอง</li>
-                    <li>📞 ติดต่อลูกค้าทันทีหากต้องการสอบถามรายละเอียดเพิ่ม</li>
-                </ul>
-            </div>
-
+        
+        <div class="mt-6">
+            {{ $bookings->links() }}
         </div>
-
     </main>
-
 </body>
-
 </html>

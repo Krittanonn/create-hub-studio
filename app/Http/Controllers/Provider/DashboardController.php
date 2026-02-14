@@ -11,28 +11,27 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $userId = Auth::id(); // ใช้ userId แทนเพื่อให้สื่อความหมายตรงกับ DB
+        $userId = Auth::id(); // ใช้ userId เพื่อเชื่อมโยงกับ user_id ในตาราง studios
 
         // 1. ดึงจำนวนสตูดิโอทั้งหมดที่เป็นของ Provider คนนี้
         $totalStudios = Studio::where('user_id', $userId)->count();
 
         // 2. ดึงรายการจองที่ "ค้างตรวจสอบ" (Pending) 
-        // เฉพาะที่จองเข้ามาในสตูดิโอที่เป็นของ Provider คนนี้เท่านั้น
+        // เติม ->get() เพื่อให้เป็น Collection ที่สามารถใช้ count() ใน Blade ได้
         $pendingBookings = Booking::whereHas('studio', function($q) use ($userId) {
-            // ✅ ต้องเป็น user_id เท่านั้น เพราะในตาราง studios ไม่มี provider_id
             $q->where('user_id', $userId); 
-        });
+        })->where('status', 'pending')->get(); 
 
-        // 3. ดึงรายการจองล่าสุด 5 รายการ (พร้อมข้อมูลลูกค้าและชื่อสตูดิโอ)
+        // 3. ดึงรายการจองล่าสุด 5 รายการ พร้อมข้อมูลลูกค้าและชื่อสตูดิโอ
         $recentBookings = Booking::whereHas('studio', function($q) use ($userId) {
-                $q->where('user_id', $userId); // เปลี่ยนจาก provider_id เป็น user_id
+                $q->where('user_id', $userId); 
             })
             ->with(['user', 'studio'])
             ->latest()
             ->take(5)
             ->get();
 
-        // 4. (แถม) คำนวณรายได้สะสมที่ถอนได้ (Balance)
+        // 4. คำนวณรายได้สะสมที่ถอนได้ (ยอดจากการจองที่ยืนยันแล้ว)
         $balance = Booking::whereHas('studio', function($q) use ($userId) {
                 $q->where('user_id', $userId);
             })->where('status', 'confirmed')->sum('total_price');

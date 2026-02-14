@@ -12,12 +12,12 @@ use App\Http\Controllers\Customer;
 |--------------------------------------------------------------------------
 */
 
-// 1. Landing Page (หน้าแรกที่ทุกคนเข้าถึงได้)
+// 1. Landing Page
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// 2. Guest Routes (สำหรับคนยังไม่ Login)
+// 2. Guest Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
@@ -26,10 +26,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
-// 3. Logout Route (ต้อง Login ก่อนถึงจะกดได้)
+// 3. Logout Route
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
-// 4. Public Explore (ลูกค้าทั่วไปดูสตูดิโอได้แม้ยังไม่ Login)
+// 4. Public Explore
 Route::get('/explore', [Customer\StudioExplorerController::class, 'index'])->name('customer.explore.index');
 Route::get('/explore/{studio}', [Customer\StudioExplorerController::class, 'show'])->name('customer.explore.show');
 
@@ -41,6 +41,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     
     // Dashboard & Reports
     Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/reports', [Admin\DashboardController::class, 'report'])->name('reports.index'); // ปรับให้ตรงกับ Dashboard
     Route::get('/reports/revenue', [Admin\DashboardController::class, 'report'])->name('reports.revenue');
 
     // Resource Management
@@ -53,11 +54,14 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
     Route::patch('/users/{user}/update', [Admin\UserController::class, 'update'])->name('users.update');
     Route::patch('/users/{user}/toggle-status', [Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    // เพิ่ม column 'is_active' ในตาราง users เพื่อรองรับฟีเจอร์นี้
     Route::delete('/users/{user}', [Admin\UserController::class, 'destroy'])->name('users.destroy');
 
     // Booking & Availability
     Route::get('/bookings', [Admin\BookingManagerController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{booking}', [Admin\BookingManagerController::class, 'show'])->name('bookings.show'); 
     Route::patch('/bookings/{id}/status', [Admin\BookingManagerController::class, 'updateStatus'])->name('bookings.update-status');
+    
     Route::get('/availability', [Admin\AvailabilityController::class, 'index'])->name('availability.index');
     Route::post('/availability', [Admin\AvailabilityController::class, 'store'])->name('availability.store');
 
@@ -68,6 +72,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     // Reviews & Notifications
     Route::get('/reviews', [Admin\ReviewManagerController::class, 'index'])->name('reviews.index');
     Route::delete('/reviews/{review}', [Admin\ReviewManagerController::class, 'destroy'])->name('reviews.destroy');
+    
     Route::get('/notifications', [Admin\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-all-read', [Admin\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 
@@ -106,6 +111,10 @@ Route::middleware(['auth', 'is_provider'])->prefix('provider')->name('provider.'
     // Reviews
     Route::get('/reviews', [Provider\ReviewController::class, 'index'])->name('reviews.index');
     Route::patch('/reviews/{review}/reply', [Provider\ReviewController::class, 'update'])->name('reviews.reply');
+
+    // Notifications (เพิ่ม .index เพื่อแก้ Error RouteNotFound)
+    Route::get('/notifications', [Provider\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/mark-all-read', [Provider\NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
 });
 
 

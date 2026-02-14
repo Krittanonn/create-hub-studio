@@ -1,148 +1,48 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
-    <title>ลงทะเบียนสตูดิโอ - Create Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มสตูดิโอใหม่ - Create Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-
-<body class="bg-[#0B0F1A] text-white p-6 md:p-10">
-
+<body class="bg-[#0B0F1A] text-white p-10">
     <div class="max-w-3xl mx-auto">
+        <a href="{{ route('provider.studios.index') }}" class="text-gray-500 hover:text-white mb-6 inline-block transition">← กลับหน้าจัดการ</a>
+        
+        <div class="bg-[#131A2E] rounded-3xl border border-white/5 p-8">
+            <h1 class="text-3xl font-bold mb-2">เพิ่มสตูดิโอใหม่</h1>
+            <p class="text-gray-400 mb-10 text-sm">ระบุข้อมูลสตูดิโอของคุณ (สถานะเริ่มต้นจะเป็น Pending เพื่อรอ Admin อนุมัติ)</p>
 
-        <!-- HEADER -->
-        <div class="mb-10">
-            <a href="{{ route('provider.studios.index') }}"
-                class="text-yellow-400 text-sm font-medium hover:underline">
-                ← ยกเลิกและกลับไป
-            </a>
+            <form action="{{ route('provider.studios.store') }}" method="POST" class="space-y-6">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-sm text-gray-400">ชื่อสตูดิโอ <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" required class="w-full bg-[#0B0F1A] border border-white/10 rounded-xl px-4 py-3 focus:border-blue-500 outline-none transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm text-gray-400">ราคาต่อชั่วโมง (บาท) <span class="text-red-500">*</span></label>
+                        <input type="number" name="price_per_hour" step="0.01" required class="w-full bg-[#0B0F1A] border border-white/10 rounded-xl px-4 py-3 focus:border-blue-500 outline-none transition">
+                    </div>
+                </div>
 
-            <h1 class="text-3xl font-semibold mt-3">
-                ลงทะเบียนสตูดิโอใหม่
-            </h1>
+                <div class="space-y-2">
+                    <label class="text-sm text-gray-400">ความจุ (คน)</label>
+                    <input type="number" name="capacity" value="1" class="w-full bg-[#0B0F1A] border border-white/10 rounded-xl px-4 py-3 focus:border-blue-500 outline-none transition">
+                </div>
 
-            <p class="text-gray-400 mt-2 text-sm">
-                กรุณากรอกข้อมูลให้ครบถ้วนเพื่อให้ Admin ตรวจสอบและอนุมัติ
-            </p>
+                <div class="space-y-2">
+                    <label class="text-sm text-gray-400">รายละเอียดสตูดิโอ <span class="text-red-500">*</span></label>
+                    <textarea name="description" rows="5" required class="w-full bg-[#0B0F1A] border border-white/10 rounded-xl px-4 py-3 focus:border-blue-500 outline-none transition" placeholder="ระบุรายละเอียด เช่น อุปกรณ์ที่มี กฎการใช้ห้อง หรือสถานที่ตั้ง..."></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-xl font-bold transition shadow-lg shadow-blue-900/20">
+                    บันทึกข้อมูลและส่งตรวจสอบ
+                </button>
+            </form>
         </div>
-
-
-        <form action="{{ route('provider.studios.store') }}"
-            method="POST"
-            enctype="multipart/form-data"
-            class="space-y-8">
-
-            @csrf
-
-
-            <!-- BASIC INFO -->
-            <div class="bg-[#131A2E] p-8 rounded-2xl border border-white/5 space-y-6">
-
-                <h3 class="font-semibold text-lg border-b border-white/10 pb-3">
-                    ข้อมูลเบื้องต้น
-                </h3>
-
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">
-                        ชื่อสตูดิโอ *
-                    </label>
-                    <input type="text"
-                        name="name"
-                        required
-                        placeholder="เช่น Studio 1 - Natural Light"
-                        class="w-full px-4 py-3 rounded-xl bg-[#0F1525] border border-white/10 focus:border-yellow-400 outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">
-                        ที่ตั้ง / ทำเล *
-                    </label>
-                    <input type="text"
-                        name="location"
-                        required
-                        placeholder="เช่น ย่านอารีย์, กรุงเทพฯ"
-                        class="w-full px-4 py-3 rounded-xl bg-[#0F1525] border border-white/10 focus:border-yellow-400 outline-none">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-2">
-                            ราคาเช่าต่อชั่วโมง (บาท) *
-                        </label>
-                        <input type="number"
-                            name="price_per_hour"
-                            required
-                            placeholder="500"
-                            class="w-full px-4 py-3 rounded-xl bg-[#0F1525] border border-white/10 focus:border-yellow-400 outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-2">
-                            ขนาดพื้นที่ (ตร.ม.)
-                        </label>
-                        <input type="number"
-                            name="size"
-                            placeholder="40"
-                            class="w-full px-4 py-3 rounded-xl bg-[#0F1525] border border-white/10 focus:border-yellow-400 outline-none">
-                    </div>
-
-                </div>
-
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">
-                        รายละเอียดเพิ่มเติม
-                    </label>
-                    <textarea name="description"
-                        rows="4"
-                        placeholder="อธิบายจุดเด่นของสตูดิโอคุณ..."
-                        class="w-full px-4 py-3 rounded-xl bg-[#0F1525] border border-white/10 focus:border-yellow-400 outline-none"></textarea>
-                </div>
-
-            </div>
-
-
-            <!-- IMAGE SECTION -->
-            <div class="bg-[#131A2E] p-8 rounded-2xl border border-white/5 space-y-6">
-
-                <h3 class="font-semibold text-lg border-b border-white/10 pb-3">
-                    รูปภาพและสื่อ
-                </h3>
-
-                <div>
-                    <label class="block text-sm text-gray-400 mb-2">
-                        อัปโหลดรูปภาพหลัก (Cover Image)
-                    </label>
-
-                    <input type="file"
-                        name="image"
-                        class="w-full px-4 py-3 rounded-xl bg-[#0F1525] border border-dashed border-white/20 text-sm">
-
-                    <p class="text-xs text-gray-500 mt-2">
-                        แนะนำขนาด 1200x800px ไฟล์ .jpg หรือ .png
-                    </p>
-                </div>
-
-            </div>
-
-
-            <!-- SUBMIT BUTTON -->
-            <button type="submit"
-                class="w-full bg-yellow-500 text-black py-4 rounded-2xl font-semibold text-lg hover:bg-yellow-400 transition">
-                ส่งข้อมูลให้ Admin อนุมัติ
-            </button>
-
-        </form>
-
     </div>
-
 </body>
-
 </html>

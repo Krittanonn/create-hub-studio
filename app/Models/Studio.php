@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Equipment;
+use App\Models\Staff;
+
 
 class Studio extends Model
 {
@@ -25,6 +28,17 @@ class Studio extends Model
     { 
         return $this->belongsTo(User::class, 'user_id'); 
     }
+
+    public function equipments()
+    {
+        return $this->hasMany(Equipment::class);
+    }
+
+    public function staffs()
+    {
+        return $this->hasMany(Staff::class);
+    }
+
 
     public function bookings() { return $this->hasMany(Booking::class); }
     public function reviews() { return $this->hasMany(Review::class); }

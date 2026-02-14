@@ -1,85 +1,46 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
-    <title>Verify Payments - Admin</title>
+    <title>ตรวจสอบยอดเงิน - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-50 flex">
+    @include('layouts.admin-sidebar')
 
-<body class="bg-[#0B0F1A] text-white min-h-screen p-10">
+    <main class="flex-1 p-10">
+        <h1 class="text-3xl font-bold mb-8">รายการรอตรวจสอบการโอนเงิน</h1>
 
-    <div class="max-w-4xl mx-auto">
-
-        <!-- HEADER -->
-        <div class="flex items-center gap-6 mb-12">
-
-            <a href="{{ route('admin.dashboard') }}"
-                class="text-yellow-400 text-xl hover:underline">
-                ←
-            </a>
-
-            <h1 class="text-3xl font-semibold">
-                ตรวจสอบยอดโอนเงิน 🔔
-            </h1>
-
-        </div>
-
-
-        <!-- LIST -->
-        <div class="space-y-6">
-
-            @forelse($pendingPayments ?? [] as $payment)
-
-            <div class="bg-[#131A2E] p-6 rounded-2xl border border-yellow-400/20 flex justify-between items-center">
-
-                <div>
-                    <p class="text-xs text-gray-500 mb-2">
-                        Booking ID: #{{ $payment->booking_id }}
-                    </p>
-
-                    <h3 class="font-semibold text-xl text-yellow-400">
-                        ฿{{ number_format($payment->amount, 2) }}
-                    </h3>
-
-                    <p class="text-sm text-gray-400 mt-1">
-                        ลูกค้า: {{ $payment->booking->user->name }}
-                    </p>
+        <div class="grid grid-cols-1 gap-6">
+            @forelse($payments as $payment)
+            <div class="bg-white p-6 rounded-2xl shadow-sm border flex items-center justify-between">
+                <div class="flex gap-6 items-center">
+                    <div class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                        <i class="fas fa-image fa-2x"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-lg">ยอดโอน: ฿{{ number_format($payment->amount, 2) }}</p>
+                        <p class="text-sm text-gray-500">ลูกค้า: {{ $payment->booking->user->name }}</p>
+                        <p class="text-xs text-blue-500 font-bold">สตูดิโอ: {{ $payment->booking->studio->name }}</p>
+                    </div>
                 </div>
-
+                
                 <div class="flex gap-3">
-
-                    <button class="bg-[#0F1525] border border-white/10 px-4 py-2 rounded-xl text-sm font-medium hover:bg-white/5 transition">
-                        ดูสลิป
-                    </button>
-
-                    <form action="{{ route('admin.payments.approve', $payment->id) }}"
-                        method="POST">
-                        @csrf
-                        @method('PATCH')
-
-                        <button type="submit"
-                            class="bg-green-500 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-green-600 transition">
-                            อนุมัติ
+                    <form action="{{ route('admin.payments.approve', $payment->id) }}" method="POST">
+                        @csrf @method('PATCH')
+                        <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-green-700 transition">
+                            ยืนยันยอดเงิน
                         </button>
                     </form>
-
+                    <button class="bg-red-50 text-red-600 px-6 py-2 rounded-xl font-bold hover:bg-red-100">ปฏิเสธ</button>
                 </div>
-
             </div>
-
             @empty
-
-            <div class="text-center py-24 bg-[#131A2E] rounded-2xl border border-dashed border-white/10 text-gray-500">
-                ไม่มีสลิปที่ค้างตรวจสอบในขณะนี้
+            <div class="text-center py-20 text-gray-400">
+                <p>ไม่มีรายการค้างตรวจสอบในขณะนี้</p>
             </div>
-
             @endforelse
-
         </div>
-
-    </div>
-
+    </main>
 </body>
-
 </html>

@@ -1,134 +1,144 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
-    <title>สตูดิโอของฉัน - Create Hub Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสตูดิโอ - Create Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+<body class="bg-[#0B0F1A] text-white flex min-h-screen">
+    <aside class="w-64 bg-[#0F1525] border-r border-white/5 min-h-screen p-6 flex flex-col fixed">
+        <div class="mb-10">
+            <h2 class="text-2xl font-semibold italic">CREATE<span class="text-blue-500">HUB</span></h2>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Provider Mode</p>
+        </div>
+        <nav class="space-y-2 flex-1 text-sm overflow-y-auto pr-2 custom-scrollbar">
+    <div class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 ml-4">Main Menu</div>
+    
+    <a href="{{ route('provider.dashboard') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.dashboard') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-chart-pie w-5"></i> แผงควบคุม
+    </a>
 
-<body class="bg-[#0B0F1A] text-white p-6 md:p-10">
+    <a href="{{ route('provider.studios.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.studios.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-house-laptop w-5"></i> สตูดิโอของฉัน
+    </a>
 
-    <div class="max-w-6xl mx-auto">
+    <a href="{{ route('provider.bookings.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.bookings.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-calendar-check w-5"></i> รายการจอง
+    </a>
 
-        <!-- HEADER -->
-        <div class="flex justify-between items-center mb-10">
+    <div class="pt-4 pb-2 text-[10px] text-gray-500 uppercase tracking-widest font-bold ml-4">Resources</div>
 
+    <a href="{{ route('provider.equipments.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.equipments.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-camera w-5"></i> อุปกรณ์เสริม
+    </a>
+
+    <a href="{{ route('provider.staffs.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.staffs.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-user-tie w-5"></i> ทีมงานพนักงาน
+    </a>
+
+    <a href="{{ route('provider.availability.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.availability.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-calendar-xmark w-5"></i> จัดการช่วงเวลาว่าง
+    </a>
+
+    <div class="pt-4 pb-2 text-[10px] text-gray-500 uppercase tracking-widest font-bold ml-4">Finance & Community</div>
+
+    <a href="{{ route('provider.payouts.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.payouts.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-wallet w-5"></i> การเงิน/ถอนเงิน
+    </a>
+
+    <a href="{{ route('provider.reviews.index') }}" 
+       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.reviews.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
+        <i class="fa-solid fa-star w-5"></i> รีวิวจากลูกค้า
+    </a>
+</nav>
+<div class="mt-auto pt-6 border-t border-white/5">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition group">
+                    <i class="fa-solid fa-right-from-bracket group-hover:rotate-180 transition-transform duration-300"></i> ออกจากระบบ
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="flex-1 ml-64 p-10">
+        <header class="flex justify-between items-end mb-10">
             <div>
-                <a href="{{ route('provider.dashboard') }}"
-                    class="text-yellow-400 text-sm font-medium hover:underline">
-                    ← กลับไป Dashboard
-                </a>
-
-                <h1 class="text-3xl font-semibold mt-3">
-                    สตูดิโอของฉัน
-                </h1>
+                <h1 class="text-3xl font-bold">สตูดิโอของฉัน</h1>
+                <p class="text-gray-400 mt-1">จัดการสตูดิโอทั้งหมดที่คุณดูแลอยู่</p>
             </div>
-
-            <a href="{{ route('provider.studios.create') }}"
-                class="bg-yellow-500 text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition">
-                + เพิ่มสตูดิโอใหม่
+            <a href="{{ route('provider.studios.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> เพิ่มสตูดิโอใหม่
             </a>
+        </header>
 
-        </div>
+        @if(session('success'))
+            <div class="bg-green-500/10 border border-green-500/50 text-green-500 p-4 rounded-xl mb-6 text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
 
-
-        <!-- LIST -->
-        <div class="grid grid-cols-1 gap-8">
-
-            @forelse($studios ?? [] as $studio)
-
-            <div class="bg-[#131A2E] rounded-2xl border border-white/5 flex flex-col md:flex-row overflow-hidden hover:border-yellow-400/40 transition">
-
-                <!-- IMAGE -->
-                <div class="w-full md:w-64 h-52 bg-[#0F1525] shrink-0">
-                    <img src="https://via.placeholder.com/400x300?text=Studio+Image"
-                        class="w-full h-full object-cover">
-                </div>
-
-                <!-- CONTENT -->
-                <div class="flex-1 p-6 flex flex-col justify-between">
-
-                    <div>
-                        <div class="flex justify-between items-start">
-
-                            <h2 class="text-xl font-semibold">
-                                {{ $studio->name }}
-                            </h2>
-
-                            <span class="px-3 py-1 text-xs rounded-full
-                            {{ $studio->status == 'active'
-                                ? 'bg-green-500/20 text-green-400'
-                                : 'bg-yellow-500/20 text-yellow-400' }}">
-                                {{ $studio->status == 'active' ? 'เปิดใช้งาน' : 'รออนุมัติ' }}
-                            </span>
-
-                        </div>
-
-                        <p class="text-gray-400 mt-2 text-sm">
-                            {{ $studio->location }}
-                        </p>
-
-                        <p class="text-gray-500 mt-4 text-sm line-clamp-2">
-                            {{ $studio->description }}
-                        </p>
-                    </div>
-
-                    <div class="flex justify-between items-center mt-8">
-
-                        <span class="text-xl font-bold text-yellow-400">
-                            ฿{{ number_format($studio->price_per_hour) }}
-                            <span class="text-sm text-gray-500">/ ชม.</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @forelse($studios as $studio)
+            <div class="bg-[#131A2E] rounded-2xl border border-white/5 overflow-hidden flex flex-col group">
+                <div class="h-48 bg-gray-800 relative">
+                    <div class="absolute top-4 right-4">
+                        @php
+                            $statusColors = [
+                                'active' => 'bg-green-500/10 text-green-500 border-green-500/20',
+                                'pending' => 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+                                'closed' => 'bg-red-500/10 text-red-500 border-red-500/20'
+                            ];
+                        @endphp
+                        <span class="{{ $statusColors[$studio->status] ?? $statusColors['pending'] }} text-[10px] px-3 py-1 rounded-full font-bold uppercase border">
+                            {{ $studio->status }}
                         </span>
-
-                        <div class="flex gap-3">
-
-                            <a href="{{ route('provider.studios.edit', $studio->id) }}"
-                                class="px-4 py-2 border border-white/10 rounded-lg text-sm hover:bg-white/5 transition">
-                                แก้ไข
-                            </a>
-
-                            <a href="{{ route('provider.availability.index', ['studio_id' => $studio->id]) }}"
-                                class="px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-medium hover:bg-yellow-400 transition">
-                                จัดการเวลา
-                            </a>
-
-                        </div>
-
                     </div>
-
+                    <div class="w-full h-full flex items-center justify-center text-gray-600">
+                        <i class="fa-solid fa-image fa-3x"></i>
+                    </div>
                 </div>
 
+                <div class="p-6 flex-1 flex flex-col">
+                    <h3 class="text-xl font-bold mb-2">{{ $studio->name }}</h3>
+                    <p class="text-gray-400 text-sm line-clamp-2 mb-4">{{ $studio->description }}</p>
+                    
+                    <div class="mt-auto pt-4 space-y-3 border-t border-white/5">
+                        <div class="flex justify-between text-sm font-medium">
+                            <span class="text-gray-500">รายชั่วโมง</span>
+                            <span class="text-blue-400">฿{{ number_format($studio->price_per_hour, 2) }}</span>
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <a href="{{ route('provider.studios.edit', $studio->id) }}" class="flex-1 bg-white/5 hover:bg-white/10 py-2 rounded-lg text-xs text-center border border-white/10 transition">
+                                <i class="fa-solid fa-pen mr-1"></i> แก้ไข
+                            </a>
+                            <form action="{{ route('provider.studios.destroy', $studio->id) }}" method="POST" class="inline">
+                                @csrf @method('DELETE')
+                                <button type="submit" onclick="return confirm('ยืนยันการลบสตูดิโอนี้?')" class="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-xs border border-red-500/20 transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-
             @empty
-
-            <div class="bg-[#131A2E] rounded-2xl p-20 text-center border border-white/5">
-
-                <div class="text-6xl mb-6 text-yellow-400">🏠</div>
-
-                <h3 class="text-xl font-semibold">
-                    คุณยังไม่มีสตูดิโอในระบบ
-                </h3>
-
-                <p class="text-gray-500 mt-3">
-                    เริ่มสร้างรายได้โดยการเพิ่มสตูดิโอแห่งแรกของคุณ
-                </p>
-
+            <div class="col-span-full py-20 bg-[#131A2E] rounded-3xl border border-dashed border-white/10 text-center">
+                <i class="fa-solid fa-store-slash fa-3x text-gray-700 mb-4"></i>
+                <p class="text-gray-500">คุณยังไม่มีสตูดิโอในระบบ</p>
+                <a href="{{ route('provider.studios.create') }}" class="text-blue-500 hover:underline mt-2 inline-block text-sm">เริ่มสร้างสตูดิโอแรกของคุณ</a>
             </div>
-
             @endforelse
-
         </div>
-
-    </div>
-
+    </main>
 </body>
-
 </html>

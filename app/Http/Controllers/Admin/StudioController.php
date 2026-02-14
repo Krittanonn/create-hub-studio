@@ -24,12 +24,14 @@ class StudioController extends Controller
     }
 
     public function update(Request $request, Studio $studio) {
-        $studio->update($request->all());
-        return redirect()->back()->with('success', 'อัปเดตข้อมูลแล้ว');
+        // อัปเดตข้อมูลตามที่ส่งมาจาก Modal
+        $studio->update($request->only('status')); 
+        return redirect()->back()->with('success', 'อัปเดตสถานะสตูดิโอเรียบร้อย');
     }
 
     public function destroy(Studio $studio) {
         $studio->delete();
         return redirect()->back()->with('success', 'ลบสตูดิโอแล้ว');
     }
+
 }

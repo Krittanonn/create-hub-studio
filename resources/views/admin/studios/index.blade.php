@@ -1,103 +1,118 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
-    <title>Manage Studios - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการสตูดิโอ - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<body class="bg-gray-50 flex">
 
-<body class="bg-[#0B0F1A] text-white min-h-screen p-10">
-
-    <div class="max-w-6xl mx-auto">
-
-        <!-- HEADER -->
-        <div class="flex items-center gap-6 mb-10">
-
-            <a href="{{ route('admin.dashboard') }}"
-                class="text-yellow-400 hover:underline text-sm">
-                ← กลับ
-            </a>
-
-            <h1 class="text-2xl font-semibold">
-                จัดการสตูดิโอทั้งหมด
-            </h1>
-
+    <aside class="w-64 bg-slate-900 text-white min-h-screen p-6 shadow-xl flex-shrink-0">
+        <div class="mb-10 text-center">
+            <h2 class="text-2xl font-bold text-blue-400">Create Hub</h2>
+            <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Admin Panel</p>
         </div>
 
+        <nav class="space-y-2">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 transition">
+                <i class="fas fa-chart-pie w-5"></i>
+                <span>แดชบอร์ด</span>
+            </a>
+            <a href="{{ route('admin.bookings.index') }}" class="flex items-center space-x-3 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 transition">
+                <i class="fas fa-calendar-check w-5"></i>
+                <span>รายการจอง</span>
+            </a>
+            <a href="{{ route('admin.studios.index') }}" class="flex items-center space-x-3 py-3 px-4 rounded-xl bg-blue-600 shadow-lg font-bold">
+                <i class="fas fa-camera-retro w-5"></i>
+                <span>สตูดิโอ</span>
+            </a>
+            <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-3 py-3 px-4 rounded-xl hover:bg-slate-800 text-slate-300 transition">
+                <i class="fas fa-user-shield w-5"></i>
+                <span>ผู้ใช้งาน</span>
+            </a>
+            <form action="{{ route('logout') }}" method="POST" class="pt-10">
+                @csrf
+                <button type="submit" class="flex items-center space-x-3 py-3 px-4 w-full rounded-xl text-red-400 hover:bg-red-600 hover:text-white transition font-bold">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>ออกจากระบบ</span>
+                </button>
+            </form>
+        </nav>
+    </aside>
 
-        <!-- TABLE CARD -->
-        <div class="bg-[#131A2E] rounded-2xl border border-white/5 overflow-hidden">
+    <main class="flex-1 p-10">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">จัดการสตูดิโอ</h1>
+            <p class="text-gray-500 italic">ตรวจสอบและแก้ไขสถานะสตูดิโอทั้งหมดในระบบ</p>
+        </header>
 
-            <table class="w-full text-left text-sm">
-
-                <thead class="border-b border-white/5 text-gray-400">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b">
                     <tr>
-                        <th class="p-5">รูปภาพ</th>
-                        <th class="p-5">ชื่อสตูดิโอ</th>
-                        <th class="p-5">เจ้าของ</th>
-                        <th class="p-5">สถานะ</th>
-                        <th class="p-5">จัดการ</th>
+                        <th class="px-6 py-4">ชื่อสตูดิโอ</th>
+                        <th class="px-6 py-4">เจ้าของ</th>
+                        <th class="px-6 py-4 text-center">สถานะ</th>
+                        <th class="px-6 py-4 text-right">การจัดการ</th>
                     </tr>
                 </thead>
-
-                <tbody>
-
-                    @forelse($studios ?? [] as $studio)
-
-                    <tr class="border-b border-white/5 hover:bg-white/5 transition">
-
-                        <td class="p-5">
-                            <div class="w-16 h-10 bg-[#0F1525] rounded border border-white/10"></div>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($studios as $studio)
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-gray-800">{{ $studio->name }}</div>
                         </td>
-
-                        <td class="p-5 font-semibold">
-                            {{ $studio->name }}
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-700">{{ $studio->user->name ?? 'N/A' }}</div>
                         </td>
-
-                        <td class="p-5 text-gray-400">
-                            {{ $studio->user->name ?? 'ไม่ระบุ' }}
-                        </td>
-
-                        <td class="p-5">
-                            <span class="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">
-                                รอการตรวจสอบ
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase {{ $studio->status == 'active' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                {{ $studio->status }}
                             </span>
                         </td>
-
-                        <td class="p-5 flex gap-3">
-
-                            <button class="bg-green-500 text-white px-4 py-1 rounded-xl text-xs font-medium hover:bg-green-600 transition">
-                                อนุมัติ
+                        <td class="px-6 py-4 text-right">
+                            <button 
+                                onclick="openStatusModal({{ $studio->id }}, {{ json_encode($studio->status) }})" 
+                                class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition">
+                                <i class="fas fa-edit"></i>
                             </button>
-
-                            <button class="bg-red-500/20 text-red-400 px-4 py-1 rounded-xl text-xs font-medium hover:bg-red-500 hover:text-white transition">
-                                ปิดชั่วคราว
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-                    @empty
-
-                    <tr>
-                        <td colspan="5"
-                            class="p-14 text-center text-gray-500">
-                            ยังไม่มีสตูดิโอในระบบ
                         </td>
                     </tr>
-
-                    @endforelse
-
+                    @endforeach
                 </tbody>
-
             </table>
-
         </div>
+    </main>
 
+    <div id="statusModal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+            <h3 class="font-black text-gray-800 uppercase mb-4">อัปเดตสถานะ</h3>
+            <form id="statusForm" action="" method="POST">
+                @csrf @method('PATCH')
+                <select name="status" id="statusSelect" class="w-full border-gray-200 rounded-xl mb-4">
+                    <option value="active">เปิดใช้งาน (Active)</option>
+                    <option value="maintenance">ปิดซ่อมบำรุง (Maintenance)</option>
+                    <option value="closed">ปิดการใช้งาน (Closed)</option>
+                </select>
+                <div class="flex gap-2">
+                    <button type="button" onclick="document.getElementById('statusModal').classList.add('hidden')" class="flex-1 py-2 text-gray-400 font-bold">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-2 bg-blue-600 text-white rounded-xl font-black">บันทึก</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <script>
+        function openStatusModal(id, currentStatus) {
+            const modal = document.getElementById('statusModal');
+            const form = document.getElementById('statusForm');
+            const select = document.getElementById('statusSelect');
+            form.action = `/admin/studios/${id}`; 
+            select.value = currentStatus;
+            modal.classList.remove('hidden');
+        }
+    </script>
 </body>
-
 </html>
