@@ -1,178 +1,193 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายละเอียดการจอง #{{ $booking->id }} - Admin Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="bg-gray-50">
+@extends('admin.layouts.app')
 
-    <div class="flex min-h-screen">
-        <aside class="w-64 bg-slate-900 text-white p-6 shadow-xl">
-            <h2 class="text-2xl font-bold mb-8 text-center text-blue-400">Admin Panel</h2>
-            <nav class="space-y-4">
-                <a href="{{ route('admin.dashboard') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-slate-800">📊 Dashboard</a>
-                <a href="{{ route('admin.bookings.index') }}" class="block py-2.5 px-4 rounded bg-blue-600 shadow-lg">📅 การจอง</a>
-                <a href="{{ route('admin.reviews.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-slate-800">⭐ จัดการรีวิว</a>
-                <a href="{{ route('admin.users.index') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-slate-800">👥 ผู้ใช้งาน</a>
-                <hr class="border-slate-700">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full text-left py-2.5 px-4 rounded transition duration-200 hover:bg-red-600">🚪 ออกจากระบบ</button>
-                </form>
-            </nav>
-        </aside>
+@section('title', 'รายละเอียดการจอง #' . $booking->id)
 
-        <main class="flex-1 p-10">
-            <div class="mb-8">
-                <a href="{{ route('admin.bookings.index') }}" class="text-blue-600 hover:text-blue-800 mb-4 inline-block">
-                    <i class="fas fa-arrow-left mr-2"></i> กลับไปหน้ารายการจอง
-                </a>
-                <div class="flex justify-between items-end">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800">รายละเอียดการจอง #{{ $booking->id }}</h1>
-                        <p class="text-gray-500">จองเมื่อวันที่ {{ $booking->created_at->format('d/m/Y H:i') }}</p>
-                    </div>
-                    <div class="space-x-2">
-                        <span class="px-4 py-2 rounded-lg font-semibold bg-blue-100 text-blue-800">
-                            สถานะ: {{ strtoupper($booking->status) }}
-                        </span>
-                    </div>
+@section('content')
+
+<div class="mb-10">
+    <a href="{{ route('admin.bookings.index') }}"
+       class="text-blue-400 hover:text-blue-300 mb-6 inline-block">
+        <i class="fas fa-arrow-left mr-2"></i>
+        กลับไปหน้ารายการจอง
+    </a>
+
+    <div class="flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-bold text-white">
+                รายละเอียดการจอง #{{ $booking->id }}
+            </h1>
+
+            <p class="text-blue-300/60">
+                จองเมื่อวันที่
+                {{ optional($booking->created_at)->format('d/m/Y H:i') }}
+            </p>
+        </div>
+
+        <span class="px-4 py-2 rounded-xl font-semibold
+                     bg-blue-500/20 text-blue-400 border border-blue-500/40">
+            สถานะ: {{ strtoupper($booking->status) }}
+        </span>
+    </div>
+</div>
+
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    {{-- LEFT COLUMN --}}
+    <div class="lg:col-span-2 space-y-6">
+
+        {{-- Studio & Time --}}
+        <div class="bg-[#111C33] p-6 rounded-2xl border border-blue-900/40 shadow-lg shadow-black/20">
+            <h3 class="text-lg font-bold mb-6 border-b border-blue-900/30 pb-3 text-white">
+                ข้อมูลสตูดิโอและเวลา
+            </h3>
+
+            <div class="grid grid-cols-2 gap-6">
+
+                <div>
+                    <p class="text-sm text-blue-300/60">สตูดิโอ</p>
+                    <p class="font-semibold text-lg text-white">
+                        {{ $booking->studio->name }}
+                    </p>
                 </div>
+
+                <div>
+                    <p class="text-sm text-blue-300/60">วันใช้บริการ</p>
+                    <p class="font-semibold text-lg text-white">
+                        {{ optional($booking->start_time)->format('d F Y') }}
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-blue-300/60">เวลาเริ่ม</p>
+                    <p class="font-semibold text-blue-400">
+                        {{ optional($booking->start_time)->format('H:i') }} น.
+                    </p>
+                </div>
+
+                <div>
+                    <p class="text-sm text-blue-300/60">เวลาสิ้นสุด</p>
+                    <p class="font-semibold text-blue-400">
+                        {{ optional($booking->end_time)->format('H:i') }} น.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+
+        {{-- Items --}}
+        <div class="bg-[#111C33] rounded-2xl border border-blue-900/40 shadow-lg shadow-black/20 overflow-hidden">
+
+            <div class="p-6 bg-[#0F1A2F] border-b border-blue-900/30">
+                <h3 class="font-bold text-white text-lg">
+                    รายการบริการและอุปกรณ์เพิ่มเติม
+                </h3>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-6">
-                    
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 class="text-lg font-bold mb-4 border-b pb-2 text-gray-700">ข้อมูลสตูดิโอและเวลา</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <p class="text-sm text-gray-400">สตูดิโอ</p>
-                                <p class="font-semibold text-lg">{{ $booking->studio->name }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-400">วันใช้บริการ</p>
-                                <p class="font-semibold text-lg">{{ $booking->start_time->format('d F Y') }}</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-400">เวลาเริ่ม</p>
-                                <p class="font-semibold text-blue-600">{{ $booking->start_time->format('H:i') }} น.</p>
-                            </div>
-                            <div>
-                                <p class="text-sm text-gray-400">เวลาสิ้นสุด</p>
-                                <p class="font-semibold text-blue-600">{{ $booking->end_time->format('H:i') }} น.</p>
-                            </div>
-                        </div>
-                    </div>
+            <table class="w-full text-left">
+                <thead class="bg-[#0F1A2F] text-xs text-blue-300/60 uppercase tracking-widest">
+                    <tr>
+                        <th class="px-6 py-4">รายการ</th>
+                        <th class="px-6 py-4 text-center">จำนวน</th>
+                        <th class="px-6 py-4 text-right">ราคา/หน่วย</th>
+                        <th class="px-6 py-4 text-right">รวม</th>
+                    </tr>
+                </thead>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="p-6 bg-gray-50 border-b">
-                            <h3 class="font-bold text-gray-700 text-lg">รายการบริการและอุปกรณ์เพิ่มเติม</h3>
-                        </div>
-                        <table class="w-full text-left">
-                            <thead class="bg-gray-50 text-xs text-gray-400 uppercase">
-                                <tr>
-                                    <th class="px-6 py-3">รายการ</th>
-                                    <th class="px-6 py-3">ประเภท</th>
-                                    <th class="px-6 py-3 text-center">จำนวน</th>
-                                    <th class="px-6 py-3 text-right">ราคา/หน่วย</th>
-                                    <th class="px-6 py-3 text-right">รวม</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                <tr>
-                                    <td class="px-6 py-4 font-medium text-gray-900">ค่าเช่าสตูดิโอ (ฐาน)</td>
-                                    <td class="px-6 py-4 text-xs text-gray-400 italic">Studio</td>
-                                    <td class="px-6 py-4 text-center">1</td>
-                                    <td class="px-6 py-4 text-right">฿{{ number_format($booking->studio->price_per_hour, 2) }}</td>
-                                    <td class="px-6 py-4 text-right">฿{{ number_format($booking->studio->price_per_hour, 2) }}</td>
-                                </tr>
-                                
-                                @foreach($booking->items as $item)
-                                <tr>
-                                    <td class="px-6 py-4 font-medium text-gray-900">
-                                        {{ $item->itemable->name }}
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="text-xs px-2 py-1 rounded bg-gray-100 text-gray-500 uppercase">
-                                            {{ str_replace('App\Models\\', '', $item->itemable_type) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center">{{ $item->quantity }}</td>
-                                    <td class="px-6 py-4 text-right">฿{{ number_format($item->price_at_time, 2) }}</td>
-                                    <td class="px-6 py-4 text-right">฿{{ number_format($item->price_at_time * $item->quantity, 2) }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot class="bg-gray-50">
-                                <tr>
-                                    <td colspan="4" class="px-6 py-4 text-right font-bold text-gray-700 uppercase">ยอดรวมสุทธิ</td>
-                                    <td class="px-6 py-4 text-right font-bold text-2xl text-blue-600">฿{{ number_format($booking->total_price, 2) }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
+                <tbody class="divide-y divide-blue-900/30">
 
-                <div class="space-y-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 class="text-lg font-bold mb-4 text-gray-700"><i class="fas fa-user-circle mr-2 text-blue-500"></i>ข้อมูลลูกค้า</h3>
-                        <div class="space-y-3">
-                            <div>
-                                <p class="text-xs text-gray-400">ชื่อ-นามสกุล</p>
-                                <p class="font-medium">{{ $booking->user->name }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400">อีเมล</p>
-                                <p class="font-medium text-blue-500">{{ $booking->user->email }}</p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400">เบอร์โทรศัพท์</p>
-                                <p class="font-medium">{{ $booking->user->phone ?? '-' }}</p>
-                            </div>
-                        </div>
-                    </div>
+                    @foreach($booking->items as $item)
+                    <tr class="hover:bg-blue-900/20 transition text-sm">
+                        <td class="px-6 py-4 font-medium text-white">
+                            {{ $item->itemable->name ?? '-' }}
+                        </td>
 
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 class="text-lg font-bold mb-4 text-gray-700"><i class="fas fa-credit-card mr-2 text-green-500"></i>สถานะการชำระเงิน</h3>
-                        
-                        <div class="text-center p-4 rounded-lg {{ $booking->payment_status === 'paid' ? 'bg-green-50' : 'bg-red-50' }} mb-4">
-                            <p class="text-sm uppercase font-bold {{ $booking->payment_status === 'paid' ? 'text-green-700' : 'text-red-700' }}">
-                                {{ $booking->payment_status === 'paid' ? 'ชำระเงินเรียบร้อยแล้ว' : 'ยังไม่ได้ชำระเงิน' }}
-                            </p>
-                        </div>
+                        <td class="px-6 py-4 text-center text-blue-300/70">
+                            {{ $item->quantity }}
+                        </td>
 
-                        @if($booking->payment)
-                        <div class="text-sm space-y-2">
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">วิธีชำระ:</span>
-                                <span class="font-medium">{{ strtoupper($booking->payment->payment_method) }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-400">วัน-เวลาที่จ่าย:</span>
-                                <span class="font-medium">{{ $booking->payment->paid_at ? $booking->payment->paid_at->format('d/m/Y H:i') : '-' }}</span>
-                            </div>
-                        </div>
-                        @endif
-                    </div>
+                        <td class="px-6 py-4 text-right text-blue-400">
+                            ฿{{ number_format($item->price_at_time, 2) }}
+                        </td>
 
-                    <div class="flex flex-col space-y-2">
-                        @if($booking->status === 'pending')
-                        <button class="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition shadow-lg shadow-green-200">
-                            ยืนยันการจอง
-                        </button>
-                        @endif
-                        <button class="w-full py-3 bg-white border border-red-200 text-red-600 hover:bg-red-50 font-bold rounded-xl transition">
-                            ยกเลิกรายการจอง
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
+                        <td class="px-6 py-4 text-right text-blue-400 font-semibold">
+                            ฿{{ number_format($item->price_at_time * $item->quantity, 2) }}
+                        </td>
+                    </tr>
+                    @endforeach
+
+                </tbody>
+
+                <tfoot class="bg-[#0F1A2F]">
+                    <tr>
+                        <td colspan="3"
+                            class="px-6 py-5 text-right font-bold uppercase text-blue-300">
+                            ยอดรวมสุทธิ
+                        </td>
+
+                        <td class="px-6 py-5 text-right font-bold text-2xl text-blue-400">
+                            ฿{{ number_format($booking->total_price, 2) }}
+                        </td>
+                    </tr>
+                </tfoot>
+
+            </table>
+        </div>
+
     </div>
 
-</body>
-</html>
+
+    {{-- RIGHT COLUMN --}}
+    <div class="space-y-6">
+
+        {{-- Customer --}}
+        <div class="bg-[#111C33] p-6 rounded-2xl border border-blue-900/40 shadow-lg shadow-black/20">
+            <h3 class="text-lg font-bold mb-6 text-white border-b border-blue-900/30 pb-3">
+                ข้อมูลลูกค้า
+            </h3>
+
+            <div class="space-y-2 text-blue-300/70 text-sm">
+                <p><strong class="text-white">ชื่อ:</strong> {{ $booking->user->name }}</p>
+                <p><strong class="text-white">Email:</strong> {{ $booking->user->email }}</p>
+                <p><strong class="text-white">เบอร์:</strong> {{ $booking->user->phone ?? '-' }}</p>
+            </div>
+        </div>
+
+
+        {{-- Payment --}}
+        <div class="bg-[#111C33] p-6 rounded-2xl border border-blue-900/40 shadow-lg shadow-black/20">
+
+            <h3 class="text-lg font-bold mb-6 text-white border-b border-blue-900/30 pb-3">
+                สถานะการชำระเงิน
+            </h3>
+
+            <p class="mb-4 text-blue-400 font-semibold uppercase">
+                {{ strtoupper($booking->payment_status) }}
+            </p>
+
+            @if($booking->payment)
+                <div class="text-sm text-blue-300/70 space-y-2">
+                    <p>
+                        วิธีชำระ:
+                        <span class="text-white font-medium">
+                            {{ strtoupper($booking->payment->payment_method) }}
+                        </span>
+                    </p>
+
+                    <p>
+                        วันที่จ่าย:
+                        <span class="text-white font-medium">
+                            {{ optional($booking->payment->paid_at)->format('d/m/Y H:i') }}
+                        </span>
+                    </p>
+                </div>
+            @endif
+
+        </div>
+
+    </div>
+
+</div>
+
+@endsection

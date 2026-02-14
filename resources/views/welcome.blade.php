@@ -21,10 +21,6 @@
 
             <div class="flex gap-8 items-center text-sm">
 
-                <a class="text-gray-300 hover:text-white transition">Features</a>
-                <a class="text-gray-300 hover:text-white transition">Pricing</a>
-                <a class="text-gray-300 hover:text-white transition">About</a>
-
                 @if (Route::has('login'))
                 @auth
                 <a href="{{ 
