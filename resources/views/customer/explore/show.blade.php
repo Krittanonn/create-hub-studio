@@ -19,20 +19,53 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         
         <div class="lg:col-span-2 space-y-8">
-            <div class="h-[400px] bg-[#111C33] rounded-[3rem] border border-blue-900/40 flex items-center justify-center relative overflow-hidden group shadow-2xl">
-                <i class="fa-solid fa-image text-8xl text-blue-900/20 group-hover:scale-110 transition-transform duration-700"></i>
-                <div class="absolute bottom-6 left-6 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
-                    <span class="text-xs font-bold uppercase tracking-widest">{{ $studio->type }} Studio</span>
+            {{-- ส่วนแสดงรูปภาพ (Gallery) --}}
+            <div class="space-y-4">
+                {{-- รูปหลัก --}}
+                <div class="h-[450px] bg-[#111C33] rounded-[3rem] border border-blue-900/40 relative overflow-hidden group shadow-2xl">
+                    @php
+                        $primaryImage = $studio->images->where('is_primary', true)->first() ?? $studio->images->first();
+                    @endphp
+
+                    @if($primaryImage)
+                        <img src="{{ asset('storage/' . $primaryImage->file_path) }}" 
+                             id="main-display"
+                             class="w-full h-full object-cover transition-all duration-700" 
+                             alt="{{ $studio->name }}">
+                    @else
+                        <div class="w-full h-full flex items-center justify-center">
+                            <i class="fa-solid fa-image text-8xl text-blue-900/20"></i>
+                        </div>
+                    @endif
+
+                    <div class="absolute bottom-6 left-6 bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
+                        <span class="text-xs font-bold uppercase tracking-widest text-blue-400">{{ $studio->status }}</span>
+                    </div>
                 </div>
+
+                {{-- รูปย่อ (Thumbnails) กรณีมีหลายรูป --}}
+                @if($studio->images->count() > 1)
+                <div class="grid grid-cols-5 gap-4 px-2">
+                    @foreach($studio->images as $img)
+                        <div class="aspect-square rounded-2xl overflow-hidden border-2 border-transparent hover:border-blue-500 transition-all cursor-pointer shadow-lg bg-[#111C33]">
+                            <img src="{{ asset('storage/' . $img->file_path) }}" 
+                                 onclick="document.getElementById('main-display').src = this.src"
+                                 class="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity">
+                        </div>
+                    @endforeach
+                </div>
+                @endif
             </div>
 
             <div class="bg-[#111C33]/50 p-10 rounded-[3rem] border border-blue-900/30">
                 <h1 class="text-4xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-400">{{ $studio->name }}</h1>
                 <p class="flex items-center text-blue-300/60 mb-8 font-medium">
-                    <i class="fa-solid fa-location-dot mr-3 text-blue-500"></i> {{ $studio->location }}
+                    <i class="fa-solid fa-location-dot mr-3 text-blue-500"></i> {{ $studio->location ?? 'กรุงเทพมหานคร' }}
+                    <span class="mx-4 text-blue-900">|</span>
+                    <i class="fa-solid fa-users mr-3 text-blue-500"></i> รองรับ {{ $studio->capacity }} คน
                 </p>
                 <div class="prose prose-invert max-w-none text-blue-100/70 leading-relaxed text-lg">
-                    {{ $studio->description }}
+                    {!! nl2br(e($studio->description)) !!}
                 </div>
             </div>
 
@@ -69,7 +102,7 @@
 
                     <div class="space-y-4 mb-8">
                         <div class="flex items-center text-sm text-blue-100/80 bg-blue-900/20 p-3 rounded-xl border border-blue-800/20">
-                            <i class="fa-solid fa-check-circle text-green-500 mr-3"></i> ระบบเสียง Hi-End
+                            <i class="fa-solid fa-check-circle text-green-500 mr-3"></i> รองรับคนได้ {{ $studio->capacity }} คน
                         </div>
                         <div class="flex items-center text-sm text-blue-100/80 bg-blue-900/20 p-3 rounded-xl border border-blue-800/20">
                             <i class="fa-solid fa-check-circle text-green-500 mr-3"></i> เครื่องปรับอากาศ
@@ -89,12 +122,14 @@
                     <h3 class="font-bold text-blue-300 mb-4 flex items-center">
                         <i class="fa-solid fa-user-tie mr-3"></i> พนักงานที่มีให้บริการ
                     </h3>
-                    @foreach($studio->staffs as $staff)
+                    @forelse($studio->staffs as $staff)
                         <div class="text-sm mb-2 text-blue-100/60 flex justify-between">
-                            <span>{{ $staff->position }}</span>
-                            <span class="text-blue-400 font-bold">฿{{ number_format($staff->price_per_day) }}</span>
+                            <span>{{ $staff->name }} ({{ $staff->role }})</span>
+                            <span class="text-blue-400 font-bold">฿{{ number_format($staff->price_per_hour) }} / ชม.</span>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-xs text-blue-300/40 italic">ไม่มีพนักงานเพิ่มเติม</p>
+                    @endforelse
                 </div>
             </div>
         </div>
