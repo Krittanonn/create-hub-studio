@@ -5,64 +5,93 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Studio;
-use App\Models\User; // เพิ่ม User Model
+use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     /**
-     * สำหรับหน้า Dashboard (หน้าแรกของ Admin)
+     * Dashboard หลัก
      */
     public function index()
     {
-        // ดึงข้อมูลสรุปไปโชว์ใน Card ต่างๆ
-        $totalUsers = User::count();
+        $totalUsers   = User::count();
         $totalStudios = Studio::count();
-        $totalRevenue = Booking::where('status', 'confirmed')->sum('total_price');
-        $pendingPayments = Booking::where('status', 'pending')->count();
 
-        // ดึงรายการจองล่าสุด 5 รายการ
+        // รายได้จริงจาก Payment
+        $totalRevenue = Payment::where('status', 'completed')
+            ->sum('amount');
+
+        // จำนวนยอดรอตรวจสอบ
+        $pendingPayments = Payment::where('status', 'pending')
+            ->count();
+
         $recentBookings = Booking::with(['user', 'studio'])
             ->latest()
             ->take(5)
             ->get();
 
         return view('admin.dashboard', compact(
-            'totalUsers', 
-            'totalStudios', 
-            'totalRevenue', 
-            'pendingPayments', 
+            'totalUsers',
+            'totalStudios',
+            'totalRevenue',
+            'pendingPayments',
             'recentBookings'
         ));
     }
 
     /**
-     * สำหรับหน้า รายงานสรุป (ที่เขียนไว้เดิม)
+     * Reports Page
      */
     public function report()
     {
-        // รายได้แยกตามสตูดิโอ
-        $studioRevenue = Studio::withCount(['bookings' => function($query) {
-            $query->where('status', 'confirmed');
-        }])->get()->map(function($studio) {
-            return [
-                'name' => $studio->name,
-                'total_bookings' => $studio->bookings_count,
-                'total_money' => Booking::where('studio_id', $studio->id)
-                                    ->where('status', 'confirmed')
-                                    ->sum('total_price')
-            ];
-        });
+        $year = now()->year;
 
-        // รายได้รวมรายเดือน
-        $monthlyRevenue = Booking::where('status', 'confirmed')
-            ->select(
-                DB::raw('SUM(total_price) as sum'),
-                DB::raw("DATE_FORMAT(created_at, '%M') as month")
+        // รายได้รวม
+        $totalRevenue = Payment::where('status', 'completed')
+            ->sum('amount');
+
+        // Booking แยกตามสถานะ
+        $statusCounts = Booking::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        // รายได้รายเดือน (จาก Payment)
+        $monthlyRevenue = Payment::select(
+                DB::raw('MONTH(paid_at) as month'),
+                DB::raw('SUM(amount) as total')
             )
+            ->whereYear('paid_at', $year)
+            ->where('status', 'completed')
             ->groupBy('month')
+            ->pluck('total', 'month');
+
+        // 🏆 Top Studios จาก Payment จริง
+        $topStudios = Payment::select(
+                'studios.id',
+                'studios.name',
+                DB::raw('SUM(payments.amount) as revenue')
+            )
+            ->join('bookings', 'payments.booking_id', '=', 'bookings.id')
+            ->join('studios', 'bookings.studio_id', '=', 'studios.id')
+            ->where('payments.status', 'completed')
+            ->groupBy('studios.id', 'studios.name')
+            ->orderByDesc('revenue')
+            ->take(5)
             ->get();
 
-        return view('admin.reports.index', compact('studioRevenue', 'monthlyRevenue'));
+        $recentBookings = Booking::with(['user', 'studio'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('admin.reports.index', compact(
+            'totalRevenue',
+            'statusCounts',
+            'monthlyRevenue',
+            'topStudios',
+            'recentBookings'
+        ));
     }
 }
