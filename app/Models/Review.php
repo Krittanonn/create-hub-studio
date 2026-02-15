@@ -11,6 +11,10 @@ class Review extends Model
 
     protected $fillable = ['user_id', 'studio_id', 'rating', 'comment', 'provider_reply', 'replied_at'];
 
+
+    protected $casts = [
+        'replied_at' => 'datetime',
+    ];
     /**
      * ความสัมพันธ์: รีวิวนี้เป็นของสตูดิโอไหน
      */
