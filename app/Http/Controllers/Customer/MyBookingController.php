@@ -17,7 +17,6 @@ class MyBookingController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // ดึงการจองทั้งหมดของ User นี้ พร้อมโหลดข้อมูล Studio ไปแสดงผล
         $bookings = $user->bookings()
             ->with('studio')
             ->latest()
@@ -34,16 +33,17 @@ class MyBookingController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // ค้นหาการจองเฉพาะที่เป็นของ User นี้เท่านั้น (Security Check)
+        // ✅ แก้ไข: เปลี่ยนจาก 'equipments', 'staffs' เป็น 'items.itemable'
+        // และโหลด payment.media เพื่อเอาไว้แสดงรูปสลิปในหน้าตรวจสอบด้วย
         $booking = $user->bookings()
-            ->with(['studio', 'equipments', 'staffs', 'payment'])
+            ->with(['studio', 'items.itemable', 'payment.media'])
             ->findOrFail($id);
 
         return view('customer.bookings.show', compact('booking'));
     }
 
     /**
-     * ยกเลิกการจอง (กรณีสถานะยังเป็น Pending)
+     * ยกเลิกการจอง
      */
     public function cancel($id)
     {
@@ -51,12 +51,12 @@ class MyBookingController extends Controller
         $user = Auth::user();
         $booking = $user->bookings()->findOrFail($id);
 
-        // อนุญาตให้ยกเลิกเฉพาะรายการที่ยังไม่ได้ชำระเงิน หรือตามเงื่อนไขของคุณ
-        if ($booking->status === 'pending_payment') {
+        // ปรับเงื่อนไขตามสถานะที่คุณใช้จริง (เช่น 'pending')
+        if ($booking->status === 'pending' || $booking->status === 'pending_payment') {
             $booking->update(['status' => 'cancelled']);
             return redirect()->back()->with('success', 'ยกเลิกการจองเรียบร้อยแล้ว');
         }
 
-        return redirect()->back()->with('error', 'ไม่สามารถยกเลิกรายการนี้ได้ กรุณาติดต่อเจ้าหน้าที่');
+        return redirect()->back()->with('error', 'ไม่สามารถยกเลิกรายการนี้ได้');
     }
 }

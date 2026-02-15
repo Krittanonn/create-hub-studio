@@ -2,113 +2,109 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Explore Studios</title>
+    <title>ค้นหาสตูดิโอ | Create Hub Studio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gradient-to-br from-[#0B1220] via-[#0E1627] to-[#07101F] text-white min-h-screen">
 
 <div class="max-w-7xl mx-auto px-4 py-14">
 
-    <div class="flex justify-between items-center mb-10">
-        <h1 class="text-3xl font-bold">
-            Explore Studios
-        </h1>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit"
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition shadow-md shadow-red-900/30">
-                Logout
-            </button>
-        </form>
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <div>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white">Explore <span class="text-blue-500">Studios</span></h1>
+            <p class="text-blue-300/60 mt-2 text-sm uppercase tracking-widest font-medium">ค้นหาพื้นที่สร้างสรรค์ผลงานของคุณ</p>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <a href="{{ route('customer.bookings.index') }}" class="text-blue-400 hover:text-blue-300 transition text-sm font-semibold">การจองของฉัน</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 border border-red-500/20 shadow-lg shadow-red-900/10">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>ออกจากระบบ
+                </button>
+            </form>
+        </div>
     </div>
 
-    {{-- Filter Section --}}
-    <form method="GET"
-          action="{{ route('customer.explore.index') }}"
-          class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12 bg-[#111C33] p-6 rounded-2xl border border-blue-900/40 shadow-lg shadow-black/20">
+    <form method="GET" action="{{ route('customer.explore.index') }}" 
+          class="bg-[#111C33]/80 backdrop-blur-xl p-6 rounded-3xl border border-blue-900/30 shadow-2xl mb-12 grid grid-cols-1 md:grid-cols-12 gap-4">
+        
+        <div class="md:col-span-4 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-blue-500/50"></i>
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="ชื่อสตูดิโอ..." 
+                   class="w-full bg-[#07101F] border border-blue-900/40 rounded-2xl pl-12 pr-4 py-3 text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all">
+        </div>
 
-        <input type="text"
-               name="search"
-               value="{{ request('search') }}"
-               placeholder="ค้นหาชื่อสตูดิโอ..."
-               class="bg-[#0F1A2F] border border-blue-900/40 rounded-xl px-4 py-2 text-blue-300 focus:outline-none focus:border-blue-500">
+        <div class="md:col-span-3">
+            <select name="type" class="w-full bg-[#07101F] border border-blue-900/40 rounded-2xl px-4 py-3 text-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all appearance-none">
+                <option value="">ทุกประเภท</option>
+                <option value="music" {{ request('type') == 'music' ? 'selected' : '' }}>Music Studio</option>
+                <option value="photography" {{ request('type') == 'photography' ? 'selected' : '' }}>Photography</option>
+                <option value="dance" {{ request('type') == 'dance' ? 'selected' : '' }}>Dance & Acting</option>
+            </select>
+        </div>
 
-        <input type="number"
-               name="min_price"
-               value="{{ request('min_price') }}"
-               placeholder="ราคาต่ำสุด"
-               class="bg-[#0F1A2F] border border-blue-900/40 rounded-xl px-4 py-2 text-blue-300 focus:outline-none focus:border-blue-500">
+        <div class="md:col-span-3 flex gap-2">
+            <input type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Min" class="w-1/2 bg-[#07101F] border border-blue-900/40 rounded-2xl px-4 py-3 text-blue-100 focus:outline-none">
+            <input type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Max" class="w-1/2 bg-[#07101F] border border-blue-900/40 rounded-2xl px-4 py-3 text-blue-100 focus:outline-none">
+        </div>
 
-        <input type="number"
-               name="max_price"
-               value="{{ request('max_price') }}"
-               placeholder="ราคาสูงสุด"
-               class="bg-[#0F1A2F] border border-blue-900/40 rounded-xl px-4 py-2 text-blue-300 focus:outline-none focus:border-blue-500">
-
-        <button class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-4 py-2 font-semibold transition shadow-md shadow-blue-900/30">
-            ค้นหา
-        </button>
+        <div class="md:col-span-2">
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-2xl transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+                ค้นหา
+            </button>
+        </div>
     </form>
 
-    {{-- Studio Grid --}}
-    @if($studios->count())
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-
+    @if($studios->count() > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             @foreach($studios as $studio)
-                <div class="bg-[#111C33] rounded-2xl border border-blue-900/40 shadow-lg shadow-black/20 hover:border-blue-500/40 hover:scale-[1.02] transition overflow-hidden">
-
-                    {{-- Placeholder Image --}}
-                    <div class="h-40 bg-[#0F1A2F] flex items-center justify-center text-blue-300/40 text-sm">
-                        Studio Image
+                <div class="group bg-[#111C33]/50 rounded-[2rem] border border-blue-900/30 overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 shadow-xl">
+                    <div class="relative h-56 bg-[#0F1A2F] overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center text-blue-500/20 text-5xl group-hover:scale-110 transition-transform duration-700">
+                            <i class="fa-solid fa-camera-retro"></i>
+                        </div>
+                        <div class="absolute top-4 left-4 bg-blue-600/90 backdrop-blur-md text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
+                            {{ $studio->type }}
+                        </div>
                     </div>
 
-                    <div class="p-5">
-
-                        <h2 class="text-lg font-semibold mb-2 text-white">
-                            {{ $studio->name }}
-                        </h2>
-
-                        <p class="text-sm text-blue-300/60 mb-2">
-                            {{ $studio->location }}
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{{ $studio->name }}</h3>
+                        <p class="text-blue-300/50 text-xs flex items-center mb-6">
+                            <i class="fa-solid fa-location-dot mr-2"></i> {{ Str::limit($studio->location, 30) }}
                         </p>
 
-                        <p class="font-bold text-lg mb-5 text-blue-400">
-                            ฿{{ number_format($studio->price_per_hour ?? $studio->base_price, 2) }}
-                            <span class="text-xs text-blue-300/60">/ ชั่วโมง</span>
-                        </p>
-
-                        <div class="flex gap-3">
-
-                            <a href="{{ route('customer.explore.show', $studio->id) }}"
-                               class="w-1/2 text-center bg-blue-500/10 text-blue-400 py-2 rounded-xl text-sm font-semibold hover:bg-blue-600 hover:text-white transition">
-                                ดูรายละเอียด
-                            </a>
-
-                            <a href="{{ route('customer.bookings.create', $studio->id) }}"
-                               class="w-1/2 text-center bg-blue-600 text-white py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition shadow-md shadow-blue-900/30">
-                                จองเลย
-                            </a>
-
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-[10px] text-blue-300/40 uppercase font-bold tracking-tighter">เริ่มต้น</p>
+                                <p class="text-2xl font-black text-blue-400">฿{{ number_format($studio->price_per_hour) }}<span class="text-xs font-normal text-blue-300/60">/ชม.</span></p>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="{{ route('customer.explore.show', $studio->id) }}" class="p-3 rounded-xl bg-blue-900/30 text-blue-400 hover:bg-blue-500 hover:text-white transition-all">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
+                                <a href="{{ route('customer.bookings.create', $studio->id) }}" class="px-5 py-3 rounded-xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all">
+                                    จองเลย
+                                </a>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             @endforeach
-
         </div>
 
-        {{-- Pagination --}}
-        <div class="mt-12 text-blue-300/70">
+        <div class="mt-16">
             {{ $studios->withQueryString()->links() }}
         </div>
-
     @else
-        <div class="text-center py-24 text-blue-300/50 italic">
-            ไม่พบสตูดิโอที่ค้นหา
+        <div class="text-center py-32 bg-[#111C33]/30 rounded-[3rem] border border-dashed border-blue-900/40">
+            <i class="fa-solid fa-ghost text-5xl text-blue-900 mb-4"></i>
+            <p class="text-blue-300/50 text-xl font-medium italic">ไม่พบสตูดิโอที่คุณกำลังมองหา</p>
+            <a href="{{ route('customer.explore.index') }}" class="mt-4 inline-block text-blue-500 hover:underline">แสดงทั้งหมด</a>
         </div>
     @endif
 

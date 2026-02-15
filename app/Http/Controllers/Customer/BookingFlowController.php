@@ -7,25 +7,19 @@ use App\Models\Studio;
 use App\Models\Booking;
 use App\Models\Equipment;
 use App\Models\Staff;
+use App\Models\BookingItem; // เรียกใช้ Model Item
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BookingFlowController extends Controller
 {
-    /**
-     * หน้าเลือกวัน เวลา และอุปกรณ์/พนักงานเสริม
-     */
     public function create(Studio $studio)
     {
-        // โหลดข้อมูลที่จำเป็นไปให้ลูกค้าเลือก
         $studio->load(['equipments', 'staffs']);
         return view('customer.bookings.create', compact('studio'));
     }
 
-    /**
-     * บันทึกการจองและคำนวณราคา
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -33,65 +27,80 @@ class BookingFlowController extends Controller
             'booking_date' => 'required|date|after_or_equal:today',
             'start_time'   => 'required',
             'end_time'     => 'required|after:start_time',
-            'equipment'    => 'array', // [id => quantity]
-            'staff'        => 'array', // [id]
+            'equipment'    => 'array',
+            'staff'        => 'array',
         ]);
 
         $studio = Studio::findOrFail($request->studio_id);
-        
-        // 1. คำนวณชั่วโมงการจอง
         $hours = $this->calculateHours($request->start_time, $request->end_time);
         
-        // 2. เริ่มคำนวณราคา (เริ่มต้นจากค่าเช่าสตูดิโอ)
-        $totalPrice = $studio->price_per_hour * $hours;
+        // ราคาตั้งต้นจากค่าเช่าสตู
+        $baseStudioPrice = $studio->price_per_hour * $hours;
 
-        // ใช้ Transaction เพื่อความปลอดภัยของข้อมูล
-        return DB::transaction(function () use ($request, $studio, $totalPrice) {
+        return DB::transaction(function () use ($request, $studio, $baseStudioPrice) {
             
+            // 1. สร้างหัวข้อการจอง (ระวัง: หาก DB ไม่มีคอลัมน์ booking_date ให้ใช้ start_time แบบเต็ม)
             $booking = Booking::create([
                 'user_id'      => Auth::id(),
                 'studio_id'    => $studio->id,
-                'booking_date' => $request->booking_date,
-                'start_time'   => $request->start_time,
-                'end_time'     => $request->end_time,
-                'total_price'  => 0, // เดี๋ยวจะ Update หลังจากบวกของเสริมเสร็จ
-                'status'       => 'pending_payment',
+                'start_time'   => $request->booking_date . ' ' . $request->start_time,
+                'end_time'     => $request->booking_date . ' ' . $request->end_time,
+                'total_price'  => $baseStudioPrice, 
+                'status'       => 'pending', // ตาม default ใน migration
             ]);
 
-            // 3. รวมราคาอุปกรณ์เสริม
+            $extraPrice = 0;
+
+            // 2. จัดการอุปกรณ์เสริม (บันทึกลง booking_items)
             if ($request->has('equipment')) {
                 foreach ($request->equipment as $id => $quantity) {
                     if ($quantity > 0) {
                         $item = Equipment::find($id);
-                        $itemPrice = $item->price_per_unit * $quantity;
-                        $totalPrice += $itemPrice;
+                        if ($item) {
+                            $itemTotalPrice = $item->price_per_unit * $quantity;
+                            $extraPrice += $itemTotalPrice;
 
-                        // บันทึกลงตาราง Pivot หรือ BookingItems (ถ้าคุณมี)
-                        $booking->equipments()->attach($id, ['quantity' => $quantity, 'price' => $itemPrice]);
+                            // ใช้ความสามารถของ Polymorphic ในการบันทึก
+                            $booking->items()->create([
+                                'itemable_id'   => $item->id,
+                                'itemable_type' => Equipment::class, // จะบันทึกเป็น 'App\Models\Equipment'
+                                'quantity'      => $quantity,
+                                'price_at_time' => $item->price_per_unit,
+                            ]);
+                        }
                     }
                 }
             }
 
-            // 4. รวมราคาพนักงานเสริม
+            // 3. จัดการพนักงานเสริม (บันทึกลง booking_items)
             if ($request->has('staff')) {
                 foreach ($request->staff as $id) {
                     $staffMember = Staff::find($id);
-                    $totalPrice += $staffMember->price_per_day;
-                    $booking->staffs()->attach($id, ['price' => $staffMember->price_per_day]);
+                    if ($staffMember) {
+                        // เช็คชื่อคอลัมน์: ใน migration staffs ของคุณคือ price_per_hour
+                        $staffPrice = $staffMember->price_per_hour; 
+                        $extraPrice += $staffPrice;
+
+                        $booking->items()->create([
+                            'itemable_id'   => $staffMember->id,
+                            'itemable_type' => Staff::class, // จะบันทึกเป็น 'App\Models\Staff'
+                            'quantity'      => 1,
+                            'price_at_time' => $staffPrice,
+                        ]);
+                    }
                 }
             }
 
-            // 5. อัปเดตราคาสุทธิ
-            $booking->update(['total_price' => $totalPrice]);
+            // 4. อัปเดตราคารวมสุดท้าย
+            $booking->update([
+                'total_price' => $baseStudioPrice + $extraPrice
+            ]);
 
             return redirect()->route('customer.payments.show', $booking->id)
-                             ->with('success', 'สร้างรายการจองแล้ว กรุณาชำระเงินภายในเวลาที่กำหนด');
+                             ->with('success', 'สร้างรายการจองแล้ว');
         });
     }
 
-    /**
-     * Helper สำหรับคำนวณจำนวนชั่วโมง
-     */
     private function calculateHours($start, $end)
     {
         $startTime = \Carbon\Carbon::parse($start);

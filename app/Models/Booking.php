@@ -27,7 +27,8 @@ class Booking extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Relations
+    // --- Relations ---
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -38,6 +39,10 @@ class Booking extends Model
         return $this->belongsTo(Studio::class);
     }
 
+    /**
+     * ดึงรายการ Item ทั้งหมด (ทั้ง Equipment และ Staff)
+     * ผ่านตาราง booking_items ที่คุณมีอยู่แล้ว
+     */
     public function items()
     {
         return $this->hasMany(BookingItem::class);
@@ -48,9 +53,28 @@ class Booking extends Model
         return $this->hasOne(Payment::class);
     }
 
-    // Helper
+    // --- Helpers / Accessors ---
+
     public function getIsPaidAttribute()
     {
         return $this->payment && $this->payment->status === 'approved';
+    }
+
+    /**
+     * ดึงเฉพาะรายการอุปกรณ์เสริม (Equipment) จากตาราง booking_items
+     * โดยตรวจสอบจาก itemable_type
+     */
+    public function getEquipmentItemsAttribute()
+    {
+        return $this->items->where('itemable_type', Equipment::class);
+    }
+
+    /**
+     * ดึงเฉพาะรายการพนักงานเสริม (Staff) จากตาราง booking_items
+     * โดยตรวจสอบจาก itemable_type
+     */
+    public function getStaffItemsAttribute()
+    {
+        return $this->items->where('itemable_type', Staff::class);
     }
 }

@@ -56,10 +56,6 @@
         <i class="fa-solid fa-wallet w-5"></i> การเงิน/ถอนเงิน
     </a>
 
-    <a href="{{ route('provider.reports.index') }}" 
-       class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.reports.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">
-        <i class="fa-solid fa-file-contract w-5"></i> รายงานสถิติ
-    </a>
 
     <a href="{{ route('provider.reviews.index') }}" 
        class="flex items-center gap-3 px-4 py-3 rounded-xl transition {{ request()->routeIs('provider.reviews.*') ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:bg-white/5' }}">

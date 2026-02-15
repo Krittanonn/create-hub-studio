@@ -78,7 +78,7 @@
                 <h1 class="text-3xl font-bold">สวัสดี, {{ auth()->user()->name }} 📸</h1>
                 <p class="text-gray-400 mt-1 text-sm">นี่คือภาพรวมธุรกิจสตูดิโอของคุณในวันนี้</p>
             </div>
-            <!-- <div class="flex gap-3">
+            <div class="flex gap-3">
                 <a href="{{ route('provider.notifications.index') }}" class="w-10 h-10 rounded-full bg-[#131A2E] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition relative">
                     <i class="fa-solid fa-bell"></i>
                     <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-[#0B0F1A]"></span>
@@ -86,7 +86,7 @@
                 <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-600/20">
                     {{ substr(auth()->user()->name, 0, 1) }}
                 </div>
-            </div> -->
+            </div>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">

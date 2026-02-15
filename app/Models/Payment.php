@@ -22,8 +22,31 @@ class Payment extends Model
         'paid_at' => 'datetime',
     ];
 
+    // --- Relations ---
+
+    /**
+     * เชื่อมต่อกับตาราง Media แบบ Polymorphic
+     * เพื่อใช้เก็บรูปภาพสลิปที่ลูกค้าอัปโหลดเข้ามา
+     */
+    public function media()
+    {
+        // 'mediable' คือ prefix ของคอลัมน์ mediable_id และ mediable_type ในตาราง media
+        return $this->morphMany(Media::class, 'mediable');
+    }
+
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    // --- Helpers ---
+
+    /**
+     * Helper สำหรับดึงรูปสลิปใบแรก (Primary) มาแสดงผล
+     */
+    public function getSlipImageAttribute()
+    {
+        $slip = $this->media()->where('is_primary', true)->first();
+        return $slip ? $slip->file_path : null;
     }
 }
